@@ -1,7 +1,11 @@
 # ps2mc-browser
-A PS2 game save browser supports displaying 3D icons.
-
 ![](7.gif)
+
+A PS2 game save browser supports displaying 3D icons. This project uses OpenGL to render 3D models. It includes the following modules:
+- PyGame
+- Numpy
+- ModernGL
+- GLM
 
 # Reference
 - [gothi - icon.sys format](https://www.ps2savetools.com/documents/iconsys-format/)
