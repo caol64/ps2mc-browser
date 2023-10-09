@@ -136,7 +136,7 @@ class SuperBlock:
         if len(byte_val) < SuperBlock.__size:
             raise Error('SuperBlock length invalid.')
         if not byte_val.startswith(SuperBlock.__magic):
-            raise Error('SuperBlock magic invalid.')
+            raise Error('Not a valid SuperBlock.')
         (self.magic,
          self.version,
          self.page_len,
