@@ -5,6 +5,9 @@ import pygame as pg
 
 
 class Window(Browser):
+    """
+    An implementation of PyGame, can't choose or change memory card.
+    """
     def __init__(self, file_path, game_name, win_size=(640, 480), fps=60):
         super().__init__(file_path)
         # pygame init

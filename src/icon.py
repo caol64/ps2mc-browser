@@ -186,16 +186,17 @@ class Icon:
         while rle_offset < compressed_size:
             rle_code = rle_code_struct.unpack_from(self.byte_val, offset + rle_offset)[0]
             rle_offset += rle_code_struct.size
-            if rle_code & 0xff00 == 0xff00:
-                next_bytes = 0x10000 - rle_code
-                for _ in range(next_bytes):
-                    texture_buf += self.byte_val[offset + rle_offset: offset + rle_offset + 2]
-                    rle_offset += 2
+            if rle_code & 0x8000:
+                next_bytes = 0x8000 - (rle_code ^ 0x8000)
+                texture_buf += self.byte_val[offset + rle_offset: offset + rle_offset + next_bytes * 2]
+                rle_offset += next_bytes * 2
             else:
                 times = rle_code
-                for _ in range(times):
-                    texture_buf += self.byte_val[offset + rle_offset: offset + rle_offset + 2]
-                rle_offset += 2
+                if times > 0:
+                    next_byte = self.byte_val[offset + rle_offset: offset + rle_offset + 2]
+                    for _ in range(times):
+                        texture_buf += next_byte
+                    rle_offset += 2
         return bytes(texture_buf)
 
     def decode_texture(self):

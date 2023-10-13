@@ -1,11 +1,18 @@
 # ps2mc-browser
-![](7.gif)
+![](data/1.gif)
 
-A PS2 game save browser supports displaying 3D icons. This project uses OpenGL to render 3D models. It includes the following modules:
-- PyGame
+A PCSX2 memory card save file browser supports displaying 3D icons. The dependencies are:
+- WxPython
 - Numpy
 - ModernGL
 - GLM
+
+# Quick Start
+```shell
+python3 wxwindow.py
+```
+
+Run the above command to open a GUI window. From the menu bar, select 'Open File' and then select the `.ps2` file from your computer. Then enjoy.
 
 # Reference
 - [gothi - icon.sys format](https://www.ps2savetools.com/documents/iconsys-format/)
