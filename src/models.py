@@ -9,7 +9,7 @@ class Camera:
 
     def __init__(self, win_size):
         self.aspect_ratio = win_size[0] / win_size[1]
-        self.position = glm.vec3(-7.2, -4.0, -4.8)
+        self.position = glm.vec3(0, -4.0, -10)
         self.up = glm.vec3(0, -1, 0)
         self.view = glm.lookAt(self.position, glm.vec3(0, -2, 0), self.up)
         self.proj = glm.perspective(glm.radians(Camera.FOV), self.aspect_ratio, Camera.NEAR, Camera.FAR)

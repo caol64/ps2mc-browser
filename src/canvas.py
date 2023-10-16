@@ -41,7 +41,7 @@ class Canvas:
         self.shader_program['icon']['view'].write(self.camera.view)
         self.shader_program['icon']['model'].write(self.m_model)
         self.shader_program['icon']['ambient'] = self.icon_sys.ambient
-        for index, light_pos in enumerate(self.icon_sys.light_pos):
+        for index, light_pos in enumerate(self.icon_sys.light_dir):
             self.shader_program['icon'][f'lights[{index}].pos'] = light_pos
         for index, light_color in enumerate(self.icon_sys.light_colors):
             self.shader_program['icon'][f'lights[{index}].color'] = light_color

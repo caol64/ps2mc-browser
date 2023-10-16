@@ -16,9 +16,9 @@ class IconSys:
         uint32 bg_color_upper_right[4];
         uint32 bg_color_lower_left[4];
         uint32 bg_color_lower_right[4];
-        float32 light_pos1[4];
-        float32 light_pos2[4];
-        float32 light_pos3[4];
+        float32 light_dir1[4];
+        float32 light_dir2[4];
+        float32 light_dir3[4];
         float32 light_color1[4];
         float32 light_color2[4];
         float32 light_color3[4];
@@ -48,7 +48,7 @@ class IconSys:
         self.background_transparency = __icon_sys[2]
         self.bg_colors = (__icon_sys[3:7], __icon_sys[7:11], __icon_sys[11:15], __icon_sys[15:19])
 
-        self.light_pos = (__icon_sys[19:23], __icon_sys[23:27], __icon_sys[27:31])
+        self.light_dir = (__icon_sys[19:23], __icon_sys[23:27], __icon_sys[27:31])
         self.light_colors = (__icon_sys[31:35], __icon_sys[35:39], __icon_sys[39:43])
         self.ambient = __icon_sys[43:47]
 
@@ -60,7 +60,7 @@ class IconSys:
         print('subtitle', self.subtitle)
         print('background_transparency', self.background_transparency)
         print('bg_colors', self.bg_colors)
-        print('light_pos', self.light_pos)
+        print('light_dir', self.light_dir)
         print('light_colors', self.light_colors)
         print('ambient', self.ambient)
         print('icon_file_normal', self.icon_file_normal)
@@ -180,7 +180,7 @@ class Icon:
     def load_texture_compressed(self, offset):
         compressed_size = struct.Struct("<I").unpack_from(self.byte_val, offset)[0]
         offset += 4
-        rle_code_struct = struct.Struct("H")
+        rle_code_struct = struct.Struct("<H")
         texture_buf = bytearray()
         rle_offset = 0
         while rle_offset < compressed_size:
