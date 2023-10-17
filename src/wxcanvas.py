@@ -1,12 +1,14 @@
-from wx import EVT_PAINT, Timer, EVT_TIMER
+from wx import Timer, EVT_TIMER
 from wx.glcanvas import *
 import moderngl as mgl
 import glm
 import time
 
 from models import BgVbo
+from models import SkyboxVbo
 from models import IconVbo
 from models import BgVao
+from models import SkyboxVao
 from models import IconVao
 from models import Camera
 
@@ -29,7 +31,7 @@ class WxCanvas(GLCanvas):
         self.SetCurrent(self._context)
 
         self.ctx = mgl.create_context()
-        self.ctx.enable(flags=mgl.DEPTH_TEST | mgl.CULL_FACE)
+        self.ctx.enable(flags=mgl.DEPTH_TEST | mgl.CULL_FACE | mgl.BLEND)
         self.icon_sys, self.icon = None, None
         self.start_time = 0
         self.vao_index = 0
@@ -54,10 +56,13 @@ class WxCanvas(GLCanvas):
         if self.start_time == 0:
             self.start_time = time.time()
         self.icon_sys, self.icon = icon_sys, icon
+        skybox_vbo = self.ctx.buffer(SkyboxVbo().bg_vertex_data)
         bg_vbo = self.ctx.buffer(BgVbo(self.icon_sys).bg_vertex_data)
         icon_vbo = [self.ctx.buffer(x) for x in IconVbo(self.icon).vertex_data]
+        self.shader_program['skybox'] = self.get_shader_program('skybox')
         self.shader_program['bg'] = self.get_shader_program('bg')
         self.shader_program['icon'] = self.get_shader_program('icon')
+        self.vao['skybox'] = SkyboxVao(self.ctx, self.shader_program['skybox'], skybox_vbo).vao
         self.vao['bg'] = BgVao(self.ctx, self.shader_program['bg'], bg_vbo).vao
         self.vao['icon'] = IconVao(self.ctx, self.shader_program['icon'], icon_vbo).vao
 
@@ -84,8 +89,9 @@ class WxCanvas(GLCanvas):
     def render(self):
         self.ctx.clear()
         self.update()
-        self.vao['icon'][self.vao_index].render()
+        self.vao['skybox'].render()
         self.vao['bg'].render()
+        self.vao['icon'][self.vao_index].render()
         self.SwapBuffers()
 
     def update(self):

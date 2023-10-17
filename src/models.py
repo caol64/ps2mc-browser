@@ -38,12 +38,20 @@ class BgVbo:
         bg_colors = icon_sys.bg_colors
         bg_colors = np.asarray((bg_colors[0], bg_colors[2], bg_colors[3], bg_colors[1]))
         bg_colors = bg_colors / 255.0
-        bg_vertex = [(-1, 1), (-1, -1), (1, -1), (1, 1)]
+        bg_vertex = [(-1, 1, 0.99), (-1, -1, 0.99), (1, -1, 0.99), (1, 1, 0.99)]
         bg_vertex_indices = [(0, 1, 3), (2, 3, 1)]
         bg_vertex = [bg_vertex[p] for index in bg_vertex_indices for p in index]
         bg_colors = [bg_colors[p] for index in bg_vertex_indices for p in index]
         bg_vertex_data = np.hstack([bg_vertex, bg_colors])
         self.bg_vertex_data = bg_vertex_data.astype(np.float16)
+
+
+class SkyboxVbo:
+    def __init__(self):
+        bg_vertex = [(-1, 1, 0.999), (-1, -1, 0.999), (1, -1, 0.999), (1, 1, 0.999)]
+        bg_vertex_indices = [(0, 1, 3), (2, 3, 1)]
+        bg_vertex_data = [bg_vertex[p] for index in bg_vertex_indices for p in index]
+        self.bg_vertex_data = np.asarray(bg_vertex_data, np.float16)
 
 
 class IconVao:
@@ -56,4 +64,9 @@ class IconVao:
 
 class BgVao:
     def __init__(self, ctx, program, vbo):
-        self.vao = ctx.vertex_array(program, [(vbo, '2f2 4f2', 'vertexPos', 'vertexColor')])
+        self.vao = ctx.vertex_array(program, [(vbo, '3f2 4f2', 'vertexPos', 'vertexColor')])
+
+
+class SkyboxVao:
+    def __init__(self, ctx, program, vbo):
+        self.vao = ctx.vertex_array(program, [(vbo, '3f2', 'vertexPos')])
