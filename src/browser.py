@@ -48,6 +48,9 @@ class Browser:
         icon = Icon(self.ps2mc.read_data_cluster(icon_entry))
         return icon_sys, icon
 
+    def destroy(self):
+        self.ps2mc.destroy()
+
     @staticmethod
     def view_tex(texture):
         Image.frombytes(mode='RGB', size=(128, 128), data=texture, decoder_name="raw").show()

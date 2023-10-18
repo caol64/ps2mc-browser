@@ -23,7 +23,7 @@ class WxFrame(wx.Frame):
         self.canvas = WxCanvas(self)
         self.statusbar = self.CreateStatusBar()
         self.on_init()
-        self.running = True
+        self.games = list()
 
     def on_init(self):
         menubar = wx.MenuBar()
@@ -49,10 +49,13 @@ class WxFrame(wx.Frame):
         self.refresh_all()
 
     def refresh_all(self):
+        if self.browser is not None:
+            self.browser.destroy()
         self.browser = Browser(self.mc_path)
         root_dirs = self.browser.list_root_dir()
-        games = [x.name for x in root_dirs]
-        self.panel.update(games)
+        self.games = [x.name for x in root_dirs]
+        self.panel.update(self.games)
+        self.update_selected_game(self.games[0])
 
     def update_selected_game(self, game):
         self.selected_game = game
@@ -77,7 +80,6 @@ class WxPanel(wx.Panel):
             for game in games:
                 self.lb.Append(game)
             self.lb.Select(0)
-            self.on_select(None)
 
 
 if __name__ == '__main__':

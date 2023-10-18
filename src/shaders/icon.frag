@@ -18,11 +18,11 @@ uniform mat4 model;
 uniform Light lights[MAX_NUM_TOTAL_LIGHTS];
 
 void main() {
-    vec3 normal = normalize(vec3(model * normal0));
+    vec3 normal = normalize(normal0).xyz;
     vec3 color = texture(texture0, uv0).rgb;
     vec3 diffuse = vec3(0);
     for (int i = 0; i < MAX_NUM_TOTAL_LIGHTS; i++) {
-        vec3 lightDir = normalize(vec3(model * -lights[i].dir));
+        vec3 lightDir = normalize(model * -lights[i].dir).xyz;
         float diff = max(dot(lightDir, normal), 0.0);
         diffuse += diff * lights[i].color.rgb;
     }

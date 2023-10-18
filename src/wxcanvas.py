@@ -37,7 +37,13 @@ class WxCanvas(GLCanvas):
         self.vao_index = 0
 
         self.shader_program = dict()
+        self.shader_program['skybox'] = self.get_shader_program('skybox')
+        self.shader_program['bg'] = self.get_shader_program('bg')
+        self.shader_program['icon'] = self.get_shader_program('icon')
+        self.vbo = dict()
+        self.vbo['skybox'] = self.ctx.buffer(SkyboxVbo().bg_vertex_data)
         self.vao = dict()
+        self.vao['skybox'] = SkyboxVao(self.ctx, self.shader_program['skybox'], self.vbo['skybox']).vao
 
         self.m_model = glm.mat4()
         self.camera = Camera(WxCanvas.SIZE)
@@ -56,13 +62,9 @@ class WxCanvas(GLCanvas):
         if self.start_time == 0:
             self.start_time = time.time()
         self.icon_sys, self.icon = icon_sys, icon
-        skybox_vbo = self.ctx.buffer(SkyboxVbo().bg_vertex_data)
         bg_vbo = self.ctx.buffer(BgVbo(self.icon_sys).bg_vertex_data)
         icon_vbo = [self.ctx.buffer(x) for x in IconVbo(self.icon).vertex_data]
-        self.shader_program['skybox'] = self.get_shader_program('skybox')
-        self.shader_program['bg'] = self.get_shader_program('bg')
-        self.shader_program['icon'] = self.get_shader_program('icon')
-        self.vao['skybox'] = SkyboxVao(self.ctx, self.shader_program['skybox'], skybox_vbo).vao
+
         self.vao['bg'] = BgVao(self.ctx, self.shader_program['bg'], bg_vbo).vao
         self.vao['icon'] = IconVao(self.ctx, self.shader_program['icon'], icon_vbo).vao
 

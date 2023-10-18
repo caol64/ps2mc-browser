@@ -16,7 +16,7 @@ uniform float tweenFactor;
 
 void main() {
     uv0 = texCoord;
-    normal0 = normal;
+    normal0 = model * normal;
     vec4 basePos = vec4(mix(vertexPos.xyz, nextVertexPos.xyz, tweenFactor), 1.0);
     gl_Position = proj * view * model * basePos;
 }

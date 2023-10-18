@@ -100,6 +100,14 @@ class Ps2mc:
         fat_matrix = self.__build_matrix(indirect_fat_matrix)
         return fat_matrix
 
+    def destroy(self):
+        del self.byte_val
+        del self.ifc_list
+        del self.rootdir_cluster
+        del self.fat_matrix
+        del self.root_entry
+        del self.entries_in_root
+
 
 class SuperBlock:
     """
