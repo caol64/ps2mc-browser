@@ -3,6 +3,9 @@ import numpy as np
 
 
 class Camera:
+    """
+    A camera class providing the view space.
+    """
     FOV = 50
     NEAR = 0.1
     FAR = 100
@@ -15,58 +18,73 @@ class Camera:
         self.proj = glm.perspective(glm.radians(Camera.FOV), self.aspect_ratio, Camera.NEAR, Camera.FAR)
 
 
-class IconVbo:
+class IconModel:
+    __FIXED_POINT_FACTOR = 4096.0
 
-    def __init__(self, icon):
-        self.vertex_data = []
+    def __init__(self, ctx, program, icon):
+        self.vbos = []
+        self._vaos = []
         for i in range(icon.animation_shapes):
-            vertex_data = icon.vertex_data[:, i]
-            uv_data = icon.uv_data
-            color_data = icon.color_data
-            vertex_data = np.hstack((vertex_data, uv_data))
-            vertex_data = vertex_data.astype(np.float16)
-            vertex_data = np.hstack((vertex_data, color_data))
             h = i + 1
             if h >= icon.animation_shapes:
                 h = 0
-            vertex_data = np.hstack((vertex_data, icon.vertex_data[:, h]))
-            self.vertex_data.append(np.hstack((vertex_data, icon.normal_data)))
+            vertex_data = np.hstack((icon.vertex_data[..., i, :3],
+                                     icon.vertex_data[..., h, :3],
+                                     icon.uv_data,
+                                     icon.normal_data[..., :3]))
+            vertex_data /= IconModel.__FIXED_POINT_FACTOR
+            vertex_data = vertex_data.astype('f2')
+            self.vbos.append(ctx.buffer(vertex_data))
+            self._vaos.append(ctx.vertex_array(program['icon'],
+                                               [(self.vbos[i], '3f2 3f2 2f2 3f2',
+                                                 'vertexPos', 'nextVertexPos', 'texCoord', 'normal')]))
+
+        texture_data = icon.texture
+        self.texture = None
+        if texture_data is not None:
+            self.texture = ctx.texture(size=(128, 128), data=texture_data, components=3)
+            self.texture.use()
+
+    def vao(self, n):
+        return self._vaos[n]
+
+    def release(self):
+        [vbo.release() for vbo in self.vbos]
+        [vao.release() for vao in self._vaos]
+        if self.texture is not None:
+            self.texture.release()
 
 
-class BgVbo:
-    def __init__(self, icon_sys):
+class BgModel:
+    __FIXED_COLOR_FACTOR = 255.0
+    __FIXED_ALPHA_FACTOR = 128.0
+
+    def __init__(self, ctx, program, icon_sys):
+        self.ctx = ctx
+        self.program = program
+        alpha = icon_sys.background_transparency / BgModel.__FIXED_ALPHA_FACTOR
+        alpha = np.full((4, 1), fill_value=alpha)
         bg_colors = icon_sys.bg_colors
-        bg_colors = np.asarray((bg_colors[0], bg_colors[2], bg_colors[3], bg_colors[1]))
-        bg_colors = bg_colors / 255.0
+        bg_colors = np.asarray((bg_colors[0][:3], bg_colors[2][:3], bg_colors[3][:3], bg_colors[1][:3]))
+        bg_colors = bg_colors / BgModel.__FIXED_COLOR_FACTOR
+        bg_colors = np.hstack([bg_colors, alpha])
         bg_vertex = [(-1, 1, 0.99), (-1, -1, 0.99), (1, -1, 0.99), (1, 1, 0.99)]
         bg_vertex_indices = [(0, 1, 3), (2, 3, 1)]
         bg_vertex = [bg_vertex[p] for index in bg_vertex_indices for p in index]
         bg_colors = [bg_colors[p] for index in bg_vertex_indices for p in index]
         bg_vertex_data = np.hstack([bg_vertex, bg_colors])
-        self.bg_vertex_data = bg_vertex_data.astype(np.float16)
+        skybox_vertex = [(-1, 1, 0.999), (-1, -1, 0.999), (1, -1, 0.999), (1, 1, 0.999)]
+        skybox_colors = [(0.6, 0.6, 0.6, 1), (0.6, 0.6, 0.6, 1), (0.6, 0.6, 0.6, 1), (0.6, 0.6, 0.6, 1)]
+        skybox_vertex = [skybox_vertex[p] for index in bg_vertex_indices for p in index]
+        skybox_colors = [skybox_colors[p] for index in bg_vertex_indices for p in index]
+        skybox_vertex_data = np.hstack([skybox_vertex, skybox_colors])
+        vertex_data = np.vstack([skybox_vertex_data, bg_vertex_data])
+        self.vbo = self.ctx.buffer(vertex_data.astype('f2'))
+        self._vao = self.ctx.vertex_array(self.program['bg'], [(self.vbo, '3f2 4f2', 'vertexPos', 'vertexColor')])
 
+    def vao(self):
+        return self._vao
 
-class SkyboxVbo:
-    def __init__(self):
-        bg_vertex = [(-1, 1, 0.999), (-1, -1, 0.999), (1, -1, 0.999), (1, 1, 0.999)]
-        bg_vertex_indices = [(0, 1, 3), (2, 3, 1)]
-        bg_vertex_data = [bg_vertex[p] for index in bg_vertex_indices for p in index]
-        self.bg_vertex_data = np.asarray(bg_vertex_data, np.float16)
-
-
-class IconVao:
-    def __init__(self, ctx, program, vbo):
-        self.vao = []
-        for i in range(len(vbo)):
-            self.vao.append(ctx.vertex_array(program, [
-                (vbo[i], '4f2 2f2 4f2 4f2 4f2', 'vertexPos', 'texCoord', 'vertexColor', 'nextVertexPos', 'normal')]))
-
-
-class BgVao:
-    def __init__(self, ctx, program, vbo):
-        self.vao = ctx.vertex_array(program, [(vbo, '3f2 4f2', 'vertexPos', 'vertexColor')])
-
-
-class SkyboxVao:
-    def __init__(self, ctx, program, vbo):
-        self.vao = ctx.vertex_array(program, [(vbo, '3f2', 'vertexPos')])
+    def release(self):
+        self.vbo.release()
+        self._vao.release()

@@ -44,7 +44,8 @@ class IconSys:
         __icon_sys = IconSys.__struct.unpack(byte_val)
         subtitle_line_break = __icon_sys[1]
         subtitle = utils.zero_terminate(__icon_sys[47])
-        self.subtitle = utils.decode_sjis(subtitle[:subtitle_line_break]), utils.decode_sjis(subtitle[subtitle_line_break:])
+        self.subtitle = (utils.decode_sjis(subtitle[:subtitle_line_break]),
+                         utils.decode_sjis(subtitle[subtitle_line_break:]))
         self.background_transparency = __icon_sys[2]
         self.bg_colors = (__icon_sys[3:7], __icon_sys[7:11], __icon_sys[11:15], __icon_sys[15:19])
 
@@ -79,8 +80,6 @@ class Icon:
     __animation_header_struct = struct.Struct("<IIfII")
     __frame_data_struct = struct.Struct("<4I")
     __frame_key_struct = struct.Struct("<2f")
-    __fixed_point_factor = 4096.0
-    __rgb_factor = 255.0
     __texture_width = 128
     __texture_height = 128
     __texture_size = __texture_width * __texture_height * 2
@@ -97,38 +96,38 @@ class Icon:
         self.tex_type = icon_header[2]
         self.vertex_count = icon_header[4]
 
-        self.vertex_data = np.zeros((self.vertex_count, self.animation_shapes, 4), dtype=np.float16)
-        self.normal_data = np.zeros((self.vertex_count, 4), dtype=np.float16)
-        self.uv_data = np.zeros((self.vertex_count, 2), dtype=np.float16)
-        self.color_data = np.zeros((self.vertex_count, 4), dtype=np.float16)
+        self.vertex_data = np.zeros((self.vertex_count, self.animation_shapes, 4))
+        self.normal_data = np.zeros((self.vertex_count, 4))
+        self.uv_data = np.zeros((self.vertex_count, 2))
+        self.color_data = np.zeros((self.vertex_count, 4))
         self.texture = None
 
         for i in range(self.vertex_count):
             for s in range(self.animation_shapes):
                 r = Icon.__vertex_coords_struct.unpack_from(byte_val, offset)
-                self.vertex_data[i, s, 0] = r[0] / Icon.__fixed_point_factor
-                self.vertex_data[i, s, 1] = r[1] / Icon.__fixed_point_factor
-                self.vertex_data[i, s, 2] = r[2] / Icon.__fixed_point_factor
-                self.vertex_data[i, s, 3] = r[3] / Icon.__fixed_point_factor
+                self.vertex_data[i, s, 0] = r[0]
+                self.vertex_data[i, s, 1] = r[1]
+                self.vertex_data[i, s, 2] = r[2]
+                self.vertex_data[i, s, 3] = r[3]
                 offset += Icon.__vertex_coords_struct.size
 
             r = Icon.__normal_dir_struct.unpack_from(byte_val, offset)
-            self.normal_data[i, 0] = r[0] / Icon.__fixed_point_factor
-            self.normal_data[i, 1] = r[1] / Icon.__fixed_point_factor
-            self.normal_data[i, 2] = r[2] / Icon.__fixed_point_factor
-            self.normal_data[i, 3] = r[3] / Icon.__fixed_point_factor
+            self.normal_data[i, 0] = r[0]
+            self.normal_data[i, 1] = r[1]
+            self.normal_data[i, 2] = r[2]
+            self.normal_data[i, 3] = r[3]
             offset += Icon.__normal_dir_struct.size
 
             r = Icon.__tex_uv_struct.unpack_from(byte_val, offset)
-            self.uv_data[i, 0] = r[0] / Icon.__fixed_point_factor
-            self.uv_data[i, 1] = r[1] / Icon.__fixed_point_factor
+            self.uv_data[i, 0] = r[0]
+            self.uv_data[i, 1] = r[1]
             offset += Icon.__tex_uv_struct.size
 
             r = Icon.__vertex_color_struct.unpack_from(byte_val, offset)
-            self.color_data[i, 0] = r[0] / Icon.__rgb_factor
-            self.color_data[i, 1] = r[1] / Icon.__rgb_factor
-            self.color_data[i, 2] = r[2] / Icon.__rgb_factor
-            self.color_data[i, 3] = r[3] / Icon.__rgb_factor
+            self.color_data[i, 0] = r[0]
+            self.color_data[i, 1] = r[1]
+            self.color_data[i, 2] = r[2]
+            self.color_data[i, 3] = r[3]
             offset += Icon.__vertex_color_struct.size
 
         (magic,
@@ -158,7 +157,9 @@ class Icon:
         print('tex_type', bin(self.tex_type))
         print('vertex_count', self.vertex_count)
         # print('vertex_data', self.vertex_data)
+        # print('vertex_data', self.vertex_data[..., 0, :3])
         # print('normal_data', self.normal_data)
+        # print('normal_data', self.normal_data[..., :3])
         # print('uv_data', self.uv_data)
         # print('color_data', self.color_data)
         print('frame_length', self.frame_length)

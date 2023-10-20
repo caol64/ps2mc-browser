@@ -4,6 +4,7 @@ from wxcanvas import WxCanvas
 
 
 class WxApp(wx.App):
+
     def OnInit(self):
         frame = WxFrame("PS2 memory card browser")
         self.SetTopWindow(frame)
@@ -33,6 +34,8 @@ class WxFrame(wx.Frame):
         menu.Append(wx.ID_EXIT)
         self.SetMenuBar(menubar)
         self.Bind(wx.EVT_MENU, self.on_open_file, id=wx.ID_OPEN)
+        self.Bind(wx.EVT_MENU, self.on_exit, id=wx.ID_EXIT)
+        self.Bind(wx.EVT_CLOSE, self.on_exit)
 
         sizer = wx.BoxSizer(wx.HORIZONTAL)
         sizer.Add(self.canvas)
@@ -46,7 +49,14 @@ class WxFrame(wx.Frame):
         file_dialog.ShowModal()
         self.mc_path = file_dialog.GetPath()
         file_dialog.Destroy()
-        self.refresh_all()
+        if self.mc_path is not None and self.mc_path != '':
+            self.refresh_all()
+
+    def on_exit(self, evt):
+        if self.browser is not None:
+            self.browser.destroy()
+        self.canvas.destroy()
+        self.Destroy()
 
     def refresh_all(self):
         if self.browser is not None:

@@ -4,12 +4,8 @@ import moderngl as mgl
 import glm
 import time
 
-from models import BgVbo
-from models import SkyboxVbo
-from models import IconVbo
-from models import BgVao
-from models import SkyboxVao
-from models import IconVao
+from models import BgModel
+from models import IconModel
 from models import Camera
 
 
@@ -37,18 +33,12 @@ class WxCanvas(GLCanvas):
         self.vao_index = 0
 
         self.shader_program = dict()
-        self.shader_program['skybox'] = self.get_shader_program('skybox')
         self.shader_program['bg'] = self.get_shader_program('bg')
         self.shader_program['icon'] = self.get_shader_program('icon')
-        self.vbo = dict()
-        self.vbo['skybox'] = self.ctx.buffer(SkyboxVbo().bg_vertex_data)
-        self.vao = dict()
-        self.vao['skybox'] = SkyboxVao(self.ctx, self.shader_program['skybox'], self.vbo['skybox']).vao
+        self.model = dict()
 
         self.m_model = glm.mat4()
         self.camera = Camera(WxCanvas.SIZE)
-        self.texture_enabled = False
-        self.texture = None
 
         self.frame_duration = 0.0
         self.ticker = Timer(self)
@@ -59,21 +49,14 @@ class WxCanvas(GLCanvas):
 
     def refresh(self, icon_sys, icon):
         self.ticker.Stop()
+        [model.release() for model in self.model.values()]
         if self.start_time == 0:
             self.start_time = time.time()
         self.icon_sys, self.icon = icon_sys, icon
-        bg_vbo = self.ctx.buffer(BgVbo(self.icon_sys).bg_vertex_data)
-        icon_vbo = [self.ctx.buffer(x) for x in IconVbo(self.icon).vertex_data]
 
-        self.vao['bg'] = BgVao(self.ctx, self.shader_program['bg'], bg_vbo).vao
-        self.vao['icon'] = IconVao(self.ctx, self.shader_program['icon'], icon_vbo).vao
+        self.model['icon'] = IconModel(self.ctx, self.shader_program, self.icon)
+        self.model['bg'] = BgModel(self.ctx, self.shader_program, self.icon_sys)
 
-        texture_data = self.icon.texture
-        if texture_data is not None:
-            self.texture = self.ctx.texture(size=(128, 128), data=texture_data, components=3)
-            self.texture_enabled = True
-
-        self.shader_program['bg']['alpha0'].write(glm.float32(self.icon_sys.background_transparency / 128))
         self.shader_program['icon']['proj'].write(self.camera.proj)
         self.shader_program['icon']['view'].write(self.camera.view)
         self.shader_program['icon']['model'].write(self.m_model)
@@ -83,17 +66,14 @@ class WxCanvas(GLCanvas):
         for index, light_color in enumerate(self.icon_sys.light_colors):
             self.shader_program['icon'][f'lights[{index}].color'] = light_color
         self.shader_program['icon']['texture0'] = 0
-        if self.texture_enabled:
-            self.texture.use()
         self.frame_duration = 1.0 / WxCanvas.FPS * self.icon.frame_length / self.icon.frame_count
         self.ticker.Start(WxCanvas.FPS)
 
     def render(self):
         self.ctx.clear()
         self.update()
-        self.vao['skybox'].render()
-        self.vao['bg'].render()
-        self.vao['icon'][self.vao_index].render()
+        self.model['bg'].vao().render()
+        self.model['icon'].vao(self.vao_index).render()
         self.SwapBuffers()
 
     def update(self):
@@ -115,3 +95,9 @@ class WxCanvas(GLCanvas):
             fragment_shader = file.read()
         program = self.ctx.program(vertex_shader=vertex_shader, fragment_shader=fragment_shader)
         return program
+
+    def destroy(self):
+        self.ticker.Destroy()
+        [model.release() for model in self.model.values()]
+        [program.release() for program in self.shader_program.values()]
+        self.ctx.release()
