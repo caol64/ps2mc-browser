@@ -1,7 +1,7 @@
 # ps2mc-browser
 English | [中文](README_zh.md)
 
-![](data/1.gif)
+![](https://cdn.jsdelivr.net/gh/caol64/ps2mc-browser/data/1.gif)
 
 A PCSX2 memory card save file browser supports displaying 3D icons.
 

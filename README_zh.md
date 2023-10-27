@@ -1,7 +1,7 @@
 # ps2mc-browser
 [English](README.md) | 中文
 
-![](data/1.gif)
+![](https://cdn.jsdelivr.net/gh/caol64/ps2mc-browser/data/1.gif)
 
 `PCSX2`存档查看器，支持显示存档里的3D动态图标。
 
