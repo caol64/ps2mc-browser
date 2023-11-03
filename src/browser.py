@@ -1,9 +1,8 @@
-from ps2mc import Ps2mc
-from icon import IconSys
-from icon import Icon
-from error import Error
 import os
-from PIL import Image
+
+from error import Error
+from icon import Icon, IconSys
+from ps2mc import Ps2mc
 
 
 class Browser:
@@ -17,10 +16,12 @@ class Browser:
         return self.ps2mc.find_sub_entries(entry)
 
     def lookup_entry_by_name(self, name):
-        filters = [e for e in self.ps2mc.entries_in_root if e.name == name and e.is_dir()]
+        filters = [
+            e for e in self.ps2mc.entries_in_root if e.name == name and e.is_dir()
+        ]
         if len(filters) > 0:
             return self.lookup_entry(filters[0])
-        raise Error(f'can\'t find game {name}')
+        raise Error(f"can't find game {name}")
 
     def export(self, name, dest):
         dir_path = dest + os.sep + name
@@ -29,7 +30,7 @@ class Browser:
         entries = self.lookup_entry_by_name(name)
         for entry in entries:
             if entry.is_file():
-                with open(dir_path + os.sep + entry.name, 'wb') as f:
+                with open(dir_path + os.sep + entry.name, "wb") as f:
                     f.write(self.ps2mc.read_data_cluster(entry))
 
     def list_all(self):
@@ -38,13 +39,15 @@ class Browser:
             print(d.name)
             entries = self.lookup_entry(d)
             for entry in entries:
-                print(f'    {entry.name}')
+                print(f"    {entry.name}")
 
     def get_icon(self, name):
         entries = self.lookup_entry_by_name(name)
-        icon_sys_entry = [e for e in entries if e.is_file() and e.name == 'icon.sys'][0]
+        icon_sys_entry = [e for e in entries if e.is_file() and e.name == "icon.sys"][0]
         icon_sys = IconSys(self.ps2mc.read_data_cluster(icon_sys_entry))
-        icon_entry = [e for e in entries if e.is_file() and e.name == icon_sys.icon_file_normal][0]
+        icon_entry = [
+            e for e in entries if e.is_file() and e.name == icon_sys.icon_file_normal
+        ][0]
         icon = Icon(self.ps2mc.read_data_cluster(icon_entry))
         return icon_sys, icon
 
@@ -53,10 +56,12 @@ class Browser:
 
     @staticmethod
     def view_tex(texture):
-        Image.frombytes(mode='RGB', size=(128, 128), data=texture, decoder_name="raw").show()
+        Image.frombytes(
+            mode="RGB", size=(128, 128), data=texture, decoder_name="raw"
+        ).show()
 
     @staticmethod
     def export_tex(texture, dest):
-        Image.frombytes(mode='RGB', size=(128, 128), data=texture, decoder_name="raw").save(dest)
-
-
+        Image.frombytes(
+            mode="RGB", size=(128, 128), data=texture, decoder_name="raw"
+        ).save(dest)

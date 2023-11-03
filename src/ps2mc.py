@@ -1,20 +1,22 @@
 import struct
+
 import numpy as np
+
 import utils
 from error import Error
 
 
 class Ps2mc:
-
     def __init__(self, file_path):
         self.file_path = file_path
-        (self.byte_val,
-         self.page_size,
-         self.pages_per_cluster,
-         self.ifc_list,
-         self.rootdir_cluster,
-         self.alloc_offset,
-         ) = self.open()
+        (
+            self.byte_val,
+            self.page_size,
+            self.pages_per_cluster,
+            self.ifc_list,
+            self.rootdir_cluster,
+            self.alloc_offset,
+        ) = self.open()
         self.spare_size = (self.page_size // 128) * 4
         self.raw_page_size = self.page_size + self.spare_size
         self.cluster_size = self.page_size * self.pages_per_cluster
@@ -24,14 +26,21 @@ class Ps2mc:
         self.entries_in_root = self.find_sub_entries(self.root_entry)
 
     def open(self):
-        with open(self.file_path, 'rb') as f:
+        with open(self.file_path, "rb") as f:
             byte_val = f.read()
         sb = SuperBlock(byte_val)
-        return byte_val, sb.page_len, sb.pages_per_cluster, sb.ifc_list, sb.rootdir_cluster, sb.alloc_offset
+        return (
+            byte_val,
+            sb.page_len,
+            sb.pages_per_cluster,
+            sb.ifc_list,
+            sb.rootdir_cluster,
+            sb.alloc_offset,
+        )
 
     def read_page(self, n):
         offset = self.raw_page_size * n
-        return self.byte_val[offset: offset + self.page_size]
+        return self.byte_val[offset : offset + self.page_size]
 
     def read_cluster(self, n):
         page_index = n * self.pages_per_cluster
@@ -41,7 +50,9 @@ class Ps2mc:
         return bytes(byte_buffer)
 
     def get_fat_value(self, n):
-        value = self.fat_matrix[(n // self.fat_per_cluster) % self.fat_per_cluster, n % self.fat_per_cluster]
+        value = self.fat_matrix[
+            (n // self.fat_per_cluster) % self.fat_per_cluster, n % self.fat_per_cluster
+        ]
         return value ^ Fat.ALLOCATED_BIT if value & Fat.ALLOCATED_BIT > 0 else value
 
     def get_root_entry(self):
@@ -66,7 +77,7 @@ class Ps2mc:
                 if len(sub_entries) < parent_entry.length:
                     sub_entries.append(e.unpack())
             chain_start = self.get_fat_value(chain_start)
-        return [x for x in sub_entries if not x.name.startswith('.')]
+        return [x for x in sub_entries if not x.name.startswith(".")]
 
     def read_data_cluster(self, entry):
         """
@@ -142,22 +153,23 @@ class SuperBlock:
 
     def __init__(self, byte_val):
         if len(byte_val) < SuperBlock.__size:
-            raise Error('SuperBlock length invalid.')
+            raise Error("SuperBlock length invalid.")
         if not byte_val.startswith(SuperBlock.__magic):
-            raise Error('Not a valid SuperBlock.')
-        (self.magic,
-         self.version,
-         self.page_len,
-         self.pages_per_cluster,
-         self.pages_per_block,
-         self.clusters_per_card,
-         self.alloc_offset,
-         self.alloc_end,
-         self.rootdir_cluster,
-         self.ifc_list,
-         self.card_type,
-         self.card_flags
-         ) = SuperBlock.__struct.unpack(byte_val[:SuperBlock.__size])
+            raise Error("Not a valid SuperBlock.")
+        (
+            self.magic,
+            self.version,
+            self.page_len,
+            self.pages_per_cluster,
+            self.pages_per_block,
+            self.clusters_per_card,
+            self.alloc_offset,
+            self.alloc_end,
+            self.rootdir_cluster,
+            self.ifc_list,
+            self.card_type,
+            self.card_flags,
+        ) = SuperBlock.__struct.unpack(byte_val[: SuperBlock.__size])
         self.ifc_list = [x for x in np.frombuffer(self.ifc_list, np.uint32) if x > 0]
 
 
@@ -200,13 +212,14 @@ class Entry:
         self.name = None
 
     def unpack(self):
-        (self.mode,
-         self.length,
-         self.created,
-         self.cluster,
-         self.modified,
-         self.name
-         ) = Entry.__struct.unpack(self.byte_val)
+        (
+            self.mode,
+            self.length,
+            self.created,
+            self.cluster,
+            self.modified,
+            self.name,
+        ) = Entry.__struct.unpack(self.byte_val)
         self.created = Entry.__tod_struct.unpack(self.created)
         self.modified = Entry.__tod_struct.unpack(self.modified)
         self.name = utils.decode_name(utils.zero_terminate(self.name))
@@ -217,14 +230,20 @@ class Entry:
         entry_count = len(byte_val) // Entry.__size
         entries = []
         for i in range(entry_count):
-            entries.append(Entry(byte_val[i * Entry.__size: i * Entry.__size + Entry.__size]))
+            entries.append(
+                Entry(byte_val[i * Entry.__size : i * Entry.__size + Entry.__size])
+            )
         return entries
 
     def is_dir(self):
-        return self.mode & (Entry.MODE_DIR | Entry.MODE_EXISTS) == (Entry.MODE_DIR | Entry.MODE_EXISTS)
+        return self.mode & (Entry.MODE_DIR | Entry.MODE_EXISTS) == (
+            Entry.MODE_DIR | Entry.MODE_EXISTS
+        )
 
     def is_file(self):
-        return self.mode & (Entry.MODE_FILE | Entry.MODE_EXISTS) == (Entry.MODE_FILE | Entry.MODE_EXISTS)
+        return self.mode & (Entry.MODE_FILE | Entry.MODE_EXISTS) == (
+            Entry.MODE_FILE | Entry.MODE_EXISTS
+        )
 
     def is_exists(self):
         return self.mode & Entry.MODE_EXISTS > 0

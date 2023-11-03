@@ -1,6 +1,8 @@
 import struct
-import utils
+
 import numpy as np
+
+import utils
 from error import Error
 
 
@@ -38,16 +40,23 @@ class IconSys:
 
     def __init__(self, byte_val):
         if len(byte_val) != IconSys.__size:
-            raise Error('IconSys length invalid.')
+            raise Error("IconSys length invalid.")
         if not byte_val.startswith(IconSys.__magic):
-            raise Error('Not a valid IconSys.')
+            raise Error("Not a valid IconSys.")
         __icon_sys = IconSys.__struct.unpack(byte_val)
         subtitle_line_break = __icon_sys[1]
         subtitle = utils.zero_terminate(__icon_sys[47])
-        self.subtitle = (utils.decode_sjis(subtitle[:subtitle_line_break]),
-                         utils.decode_sjis(subtitle[subtitle_line_break:]))
+        self.subtitle = (
+            utils.decode_sjis(subtitle[:subtitle_line_break]),
+            utils.decode_sjis(subtitle[subtitle_line_break:]),
+        )
         self.background_transparency = __icon_sys[2]
-        self.bg_colors = (__icon_sys[3:7], __icon_sys[7:11], __icon_sys[11:15], __icon_sys[15:19])
+        self.bg_colors = (
+            __icon_sys[3:7],
+            __icon_sys[7:11],
+            __icon_sys[11:15],
+            __icon_sys[15:19],
+        )
 
         self.light_dir = (__icon_sys[19:23], __icon_sys[23:27], __icon_sys[27:31])
         self.light_colors = (__icon_sys[31:35], __icon_sys[35:39], __icon_sys[39:43])
@@ -58,15 +67,15 @@ class IconSys:
         self.icon_file_delete = utils.zero_terminate(__icon_sys[50]).decode("ascii")
 
     def print_info(self):
-        print('subtitle', self.subtitle)
-        print('background_transparency', self.background_transparency)
-        print('bg_colors', self.bg_colors)
-        print('light_dir', self.light_dir)
-        print('light_colors', self.light_colors)
-        print('ambient', self.ambient)
-        print('icon_file_normal', self.icon_file_normal)
-        print('icon_file_copy', self.icon_file_copy)
-        print('icon_file_delete', self.icon_file_delete)
+        print("subtitle", self.subtitle)
+        print("background_transparency", self.background_transparency)
+        print("bg_colors", self.bg_colors)
+        print("light_dir", self.light_dir)
+        print("light_colors", self.light_colors)
+        print("ambient", self.ambient)
+        print("icon_file_normal", self.icon_file_normal)
+        print("icon_file_copy", self.icon_file_copy)
+        print("icon_file_delete", self.icon_file_delete)
 
 
 class Icon:
@@ -91,7 +100,7 @@ class Icon:
         icon_header = Icon.__icon_header_struct.unpack_from(byte_val, offset)
         offset += Icon.__icon_header_struct.size
         if icon_header[0] != Icon.__magic:
-            raise Error('Not a valid Icon.')
+            raise Error("Not a valid Icon.")
         self.animation_shapes = icon_header[1]
         self.tex_type = icon_header[2]
         self.vertex_count = icon_header[4]
@@ -130,15 +139,17 @@ class Icon:
             self.color_data[i, 3] = r[3]
             offset += Icon.__vertex_color_struct.size
 
-        (magic,
-         self.frame_length,
-         self.anim_speed,
-         self.play_offset,
-         self.frame_count) = Icon.__animation_header_struct.unpack_from(byte_val, offset)
+        (
+            magic,
+            self.frame_length,
+            self.anim_speed,
+            self.play_offset,
+            self.frame_count,
+        ) = Icon.__animation_header_struct.unpack_from(byte_val, offset)
         offset += Icon.__animation_header_struct.size
 
         if magic != Icon.__animation_header_magic:
-            raise Error('Not a valid animation header.')
+            raise Error("Not a valid animation header.")
 
         for i in range(self.frame_count):
             frame_data = Icon.__frame_data_struct.unpack_from(byte_val, offset)
@@ -153,30 +164,30 @@ class Icon:
     def print_info(self):
         np.set_printoptions(threshold=np.inf)
         np.set_printoptions(suppress=True)
-        print('animation_shapes', self.animation_shapes)
-        print('tex_type', bin(self.tex_type))
-        print('vertex_count', self.vertex_count)
+        print("animation_shapes", self.animation_shapes)
+        print("tex_type", bin(self.tex_type))
+        print("vertex_count", self.vertex_count)
         # print('vertex_data', self.vertex_data)
         # print('vertex_data', self.vertex_data[..., 0, :3])
         # print('normal_data', self.normal_data)
         # print('normal_data', self.normal_data[..., :3])
         # print('uv_data', self.uv_data)
         # print('color_data', self.color_data)
-        print('frame_length', self.frame_length)
-        print('anim_speed', self.anim_speed)
-        print('play_offset', self.play_offset)
-        print('frame_count', self.frame_count)
+        print("frame_length", self.frame_length)
+        print("anim_speed", self.anim_speed)
+        print("play_offset", self.play_offset)
+        print("frame_count", self.frame_count)
         # print('texture', len(self.texture))
 
     def export_texture(self, dest):
-        with open(dest, 'wb') as f:
+        with open(dest, "wb") as f:
             f.write(self.texture)
 
     def load_texture(self, offset):
         if self.tex_type & 0b1000 > 0:
             return self.load_texture_compressed(offset)
         else:
-            return self.byte_val[offset: offset + Icon.__texture_size]
+            return self.byte_val[offset : offset + Icon.__texture_size]
 
     def load_texture_compressed(self, offset):
         compressed_size = struct.Struct("<I").unpack_from(self.byte_val, offset)[0]
@@ -189,12 +200,16 @@ class Icon:
             rle_offset += rle_code_struct.size
             if rle_code & 0x8000:
                 next_bytes = 0x8000 - (rle_code ^ 0x8000)
-                texture_buf += self.byte_val[offset + rle_offset: offset + rle_offset + next_bytes * 2]
+                texture_buf += self.byte_val[
+                    offset + rle_offset : offset + rle_offset + next_bytes * 2
+                ]
                 rle_offset += next_bytes * 2
             else:
                 times = rle_code
                 if times > 0:
-                    next_byte = self.byte_val[offset + rle_offset: offset + rle_offset + 2]
+                    next_byte = self.byte_val[
+                        offset + rle_offset : offset + rle_offset + 2
+                    ]
                     for _ in range(times):
                         texture_buf += next_byte
                     rle_offset += 2
@@ -204,7 +219,7 @@ class Icon:
         tex_offset = 0
         rgb_tex_offset = 0
         out = np.zeros(Icon.__rgb_texture_size, dtype=np.uint8)
-        tex_struct = struct.Struct('<H')
+        tex_struct = struct.Struct("<H")
         while tex_offset < len(self.texture):
             b = tex_struct.unpack_from(self.texture, tex_offset)[0]
             out[rgb_tex_offset] = (b & 0x1F) << 3

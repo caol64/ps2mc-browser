@@ -1,5 +1,4 @@
 moderngl==5.8.2
 numpy==1.25.2
-Pillow==9.0.1
 PyGLM==2.7.0
 wxPython==4.2.1

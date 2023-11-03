@@ -1,10 +1,10 @@
 import wx
+
 from browser import Browser
 from wxcanvas import WxCanvas
 
 
 class WxApp(wx.App):
-
     def OnInit(self):
         frame = WxFrame("PS2 memory card browser")
         self.SetTopWindow(frame)
@@ -43,13 +43,13 @@ class WxFrame(wx.Frame):
         self.SetSizerAndFit(sizer)
 
     def on_open_file(self, evt):
-        file_dialog = wx.FileDialog(self, "Open", "", "",
-                                    "(*.ps2)|*.ps2",
-                                    wx.FD_OPEN | wx.FD_FILE_MUST_EXIST)
+        file_dialog = wx.FileDialog(
+            self, "Open", "", "", "(*.ps2)|*.ps2", wx.FD_OPEN | wx.FD_FILE_MUST_EXIST
+        )
         file_dialog.ShowModal()
         self.mc_path = file_dialog.GetPath()
         file_dialog.Destroy()
-        if self.mc_path is not None and self.mc_path != '':
+        if self.mc_path is not None and self.mc_path != "":
             self.refresh_all()
 
     def on_exit(self, evt):
@@ -70,7 +70,9 @@ class WxFrame(wx.Frame):
     def update_selected_game(self, game):
         self.selected_game = game
         self.icon_sys, self.icon = self.browser.get_icon(game)
-        self.statusbar.SetStatusText(f'{self.icon_sys.subtitle[0]} {self.icon_sys.subtitle[1]}')
+        self.statusbar.SetStatusText(
+            f"{self.icon_sys.subtitle[0]} {self.icon_sys.subtitle[1]}"
+        )
         self.canvas.refresh(self.icon_sys, self.icon)
 
 
@@ -92,6 +94,6 @@ class WxPanel(wx.Panel):
             self.lb.Select(0)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     app = WxApp(False)
     app.MainLoop()
