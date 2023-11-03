@@ -187,7 +187,7 @@ class Icon:
         if self.tex_type & 0b1000 > 0:
             return self.load_texture_compressed(offset)
         else:
-            return self.byte_val[offset : offset + Icon.__texture_size]
+            return self.byte_val[offset: offset + Icon.__texture_size]
 
     def load_texture_compressed(self, offset):
         compressed_size = struct.Struct("<I").unpack_from(self.byte_val, offset)[0]
@@ -201,14 +201,14 @@ class Icon:
             if rle_code & 0x8000:
                 next_bytes = 0x8000 - (rle_code ^ 0x8000)
                 texture_buf += self.byte_val[
-                    offset + rle_offset : offset + rle_offset + next_bytes * 2
+                    offset + rle_offset: offset + rle_offset + next_bytes * 2
                 ]
                 rle_offset += next_bytes * 2
             else:
                 times = rle_code
                 if times > 0:
                     next_byte = self.byte_val[
-                        offset + rle_offset : offset + rle_offset + 2
+                        offset + rle_offset: offset + rle_offset + 2
                     ]
                     for _ in range(times):
                         texture_buf += next_byte

@@ -40,7 +40,7 @@ class Ps2mc:
 
     def read_page(self, n):
         offset = self.raw_page_size * n
-        return self.byte_val[offset : offset + self.page_size]
+        return self.byte_val[offset: offset + self.page_size]
 
     def read_cluster(self, n):
         page_index = n * self.pages_per_cluster
@@ -231,7 +231,7 @@ class Entry:
         entries = []
         for i in range(entry_count):
             entries.append(
-                Entry(byte_val[i * Entry.__size : i * Entry.__size + Entry.__size])
+                Entry(byte_val[i * Entry.__size: i * Entry.__size + Entry.__size])
             )
         return entries
 

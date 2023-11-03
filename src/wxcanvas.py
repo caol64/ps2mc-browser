@@ -1,9 +1,10 @@
 import time
+from pathlib import Path
 
 import glm
 import moderngl as mgl
-from wx import EVT_TIMER, Timer
-from wx.glcanvas import *
+from wx import EVT_TIMER, Timer, glcanvas
+from wx.glcanvas import GLCanvas, GLContext
 
 from models import BgModel, Camera, IconModel
 
@@ -18,12 +19,12 @@ class WxCanvas(GLCanvas):
             parent,
             size=WxCanvas.SIZE,
             attribList=[
-                WX_GL_CORE_PROFILE,
-                WX_GL_DOUBLEBUFFER,
-                WX_GL_MAJOR_VERSION, 3,
-                WX_GL_MINOR_VERSION, 3,
-                WX_GL_RGBA,
-                WX_GL_DEPTH_SIZE, 24,
+                glcanvas.WX_GL_CORE_PROFILE,
+                glcanvas.WX_GL_DOUBLEBUFFER,
+                glcanvas.WX_GL_MAJOR_VERSION, 3,
+                glcanvas.WX_GL_MINOR_VERSION, 3,
+                glcanvas.WX_GL_RGBA,
+                glcanvas.WX_GL_DEPTH_SIZE, 24,
             ],
         )
         self._context = GLContext(self)
@@ -99,9 +100,9 @@ class WxCanvas(GLCanvas):
         self.shader_program["icon"]["model"].write(m_model)
 
     def get_shader_program(self, shader_name):
-        with open(f"shaders/{shader_name}.vert") as file:
+        with open(Path(__file__).parent / f"shaders/{shader_name}.vert") as file:
             vertex_shader = file.read()
-        with open(f"shaders/{shader_name}.frag") as file:
+        with open(Path(__file__).parent / f"shaders/{shader_name}.frag") as file:
             fragment_shader = file.read()
         program = self.ctx.program(
             vertex_shader=vertex_shader, fragment_shader=fragment_shader
