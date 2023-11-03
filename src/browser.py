@@ -53,15 +53,3 @@ class Browser:
 
     def destroy(self):
         self.ps2mc.destroy()
-
-    @staticmethod
-    def view_tex(texture):
-        Image.frombytes(
-            mode="RGB", size=(128, 128), data=texture, decoder_name="raw"
-        ).show()
-
-    @staticmethod
-    def export_tex(texture, dest):
-        Image.frombytes(
-            mode="RGB", size=(128, 128), data=texture, decoder_name="raw"
-        ).save(dest)
