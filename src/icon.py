@@ -190,6 +190,9 @@ class Icon:
             return self.byte_val[offset: offset + Icon.__texture_size]
 
     def load_texture_compressed(self, offset):
+        """
+        See: https://babyno.top/posts/2023/10/rle-algorithm-in-ps2/
+        """
         compressed_size = struct.Struct("<I").unpack_from(self.byte_val, offset)[0]
         offset += 4
         rle_code_struct = struct.Struct("<H")
@@ -216,6 +219,9 @@ class Icon:
         return bytes(texture_buf)
 
     def decode_texture(self):
+        """
+        See: https://babyno.top/posts/2023/10/ps2-texture-encoding-algorithm-a1b5g5r5/
+        """
         tex_offset = 0
         rgb_tex_offset = 0
         out = np.zeros(Icon.__rgb_texture_size, dtype=np.uint8)

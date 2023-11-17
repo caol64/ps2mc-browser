@@ -19,7 +19,7 @@ class WxFrame(wx.Frame):
         self.browser = None
         self.mc_path = None
         self.selected_game = None
-        self.icon_sys, self.icon = None, None
+        self.icon_sys, self.icons = None, None
         self.panel = WxPanel(self)
         self.canvas = WxCanvas(self)
         self.statusbar = self.CreateStatusBar()
@@ -59,6 +59,9 @@ class WxFrame(wx.Frame):
         self.Destroy()
 
     def refresh_all(self):
+        """
+        When a new memory card image is selected, refresh the canvas and game list.
+        """
         if self.browser is not None:
             self.browser.destroy()
         self.browser = Browser(self.mc_path)
@@ -68,12 +71,15 @@ class WxFrame(wx.Frame):
         self.update_selected_game(self.games[0])
 
     def update_selected_game(self, game):
+        """
+        When a game is selected, refresh the canvas.
+        """
         self.selected_game = game
-        self.icon_sys, self.icon = self.browser.get_icon(game)
+        self.icon_sys, self.icons = self.browser.get_icon(game)
         self.statusbar.SetStatusText(
             f"{self.icon_sys.subtitle[0]} {self.icon_sys.subtitle[1]}"
         )
-        self.canvas.refresh(self.icon_sys, self.icon)
+        self.canvas.refresh(self.icon_sys, self.icons)
 
 
 class WxPanel(wx.Panel):

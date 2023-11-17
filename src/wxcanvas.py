@@ -1,4 +1,6 @@
+import random
 import time
+import wx
 from pathlib import Path
 
 import glm
@@ -6,7 +8,7 @@ import moderngl as mgl
 from wx import EVT_TIMER, Timer, glcanvas
 from wx.glcanvas import GLCanvas, GLContext
 
-from models import BgModel, Camera, IconModel
+from models import BgModel, Camera, IconModel, CircleModel
 
 
 class WxCanvas(GLCanvas):
@@ -27,18 +29,21 @@ class WxCanvas(GLCanvas):
                 glcanvas.WX_GL_DEPTH_SIZE, 24,
             ],
         )
+        self.parent = parent
         self._context = GLContext(self)
         self.SetCurrent(self._context)
 
         self.ctx = mgl.create_context()
         self.ctx.enable(flags=mgl.DEPTH_TEST | mgl.CULL_FACE | mgl.BLEND)
-        self.icon_sys, self.icon = None, None
+        self.icon_sys, self.icons = None, None
+        self.icon = None
         self.start_time = 0
         self.vao_index = 0
 
         self.shader_program = dict()
         self.shader_program["bg"] = self.get_shader_program("bg")
         self.shader_program["icon"] = self.get_shader_program("icon")
+        self.shader_program["circle"] = self.get_shader_program("circle")
         self.model = dict()
 
         self.m_model = glm.mat4()
@@ -47,19 +52,32 @@ class WxCanvas(GLCanvas):
         self.frame_duration = 0.0
         self.ticker = Timer(self)
         self.Bind(EVT_TIMER, self.on_tick, self.ticker)
+        self.Bind(wx.EVT_LEFT_DOWN, self.on_left_down)
+
+    def on_left_down(self, event):
+        x, y = event.GetPosition()
+        self.parent.statusbar.SetStatusText(
+            f"Mouse clicked at ({x}, {y})"
+        )
 
     def on_tick(self, evt):
         self.render()
 
-    def refresh(self, icon_sys, icon):
+    def refresh(self, icon_sys, icons):
+        """
+        Refresh the canvas when a selected game is changed.
+        The program will release the old 'bg' and 'icon' resources and initialize new 'bg' and 'icon'.
+        """
         self.ticker.Stop()
         [model.release() for model in self.model.values()]
         if self.start_time == 0:
             self.start_time = time.time()
-        self.icon_sys, self.icon = icon_sys, icon
+        self.icon_sys, self.icons = icon_sys, icons
+        self.icon = self.icons[0]
 
         self.model["icon"] = IconModel(self.ctx, self.shader_program, self.icon)
         self.model["bg"] = BgModel(self.ctx, self.shader_program, self.icon_sys)
+        self.model["circles"] = CircleModel(self.ctx, self.shader_program, 3)
 
         self.shader_program["icon"]["proj"].write(self.camera.proj)
         self.shader_program["icon"]["view"].write(self.camera.view)
@@ -76,13 +94,23 @@ class WxCanvas(GLCanvas):
         self.ticker.Start(WxCanvas.FPS)
 
     def render(self):
+        """
+        Render a frame of the image.
+        """
         self.ctx.clear()
         self.update()
         self.model["bg"].vao().render()
         self.model["icon"].vao(self.vao_index).render()
+        for vao in self.model["circles"].vaos():
+            translation = (random.uniform(-1, 1), random.uniform(-1, 1))
+            self.shader_program["circle"]['translation'].value = translation
+            vao.render(mgl.TRIANGLE_FAN)
         self.SwapBuffers()
 
     def update(self):
+        """
+        Update VAO, VBO, and other variables across frames.
+        """
         animation_time = time.time() - self.start_time
         curr_frame = (
             int(animation_time * WxCanvas.FPS * self.icon.anim_speed)

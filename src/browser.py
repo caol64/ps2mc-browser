@@ -1,4 +1,5 @@
 import os
+from typing import List, Tuple
 
 from error import Error
 from icon import Icon, IconSys
@@ -41,15 +42,16 @@ class Browser:
             for entry in entries:
                 print(f"    {entry.name}")
 
-    def get_icon(self, name):
+    def get_icon(self, name) -> Tuple[IconSys, List[Icon]]:
         entries = self.lookup_entry_by_name(name)
+
         icon_sys_entry = [e for e in entries if e.is_file() and e.name == "icon.sys"][0]
         icon_sys = IconSys(self.ps2mc.read_data_cluster(icon_sys_entry))
-        icon_entry = [
-            e for e in entries if e.is_file() and e.name == icon_sys.icon_file_normal
-        ][0]
-        icon = Icon(self.ps2mc.read_data_cluster(icon_entry))
-        return icon_sys, icon
+
+        icon_names = {icon_sys.icon_file_normal, icon_sys.icon_file_copy, icon_sys.icon_file_delete}
+        icon_entries = [[e for e in entries if e.is_file() and e.name == icon_name][0] for icon_name in icon_names]
+        icons = [Icon(self.ps2mc.read_data_cluster(icon_entry)) for icon_entry in icon_entries]
+        return icon_sys, icons
 
     def destroy(self):
         self.ps2mc.destroy()

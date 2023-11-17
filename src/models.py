@@ -22,6 +22,9 @@ class Camera:
 
 
 class IconModel:
+    """
+    Vertex data for the 3D icon.
+    """
     __FIXED_POINT_FACTOR = 4096.0
 
     def __init__(self, ctx, program, icon):
@@ -75,6 +78,9 @@ class IconModel:
 
 
 class BgModel:
+    """
+    Vertex data for the background.
+    """
     __FIXED_COLOR_FACTOR = 255.0
     __FIXED_ALPHA_FACTOR = 128.0
 
@@ -116,3 +122,34 @@ class BgModel:
     def release(self):
         self.vbo.release()
         self._vao.release()
+
+
+class CircleModel:
+    """
+    Vertex data for the action button.
+    """
+    num_segments = 10
+    radius = 0.02
+
+    def __init__(self, ctx, program, n):
+        self.ctx = ctx
+        self.program = program
+        self.vbos = []
+        self._vaos = []
+        for num in range(n):
+            vertices = []
+            for i in range(CircleModel.num_segments + 1):
+                angle = i * 2.0 * np.pi / CircleModel.num_segments
+                x = CircleModel.radius * np.cos(angle)
+                y = CircleModel.radius * np.sin(angle)
+                vertices.extend([x, y])
+            vertex_data = np.array(vertices, dtype='f4')
+            self.vbos.append(self.ctx.buffer(vertex_data))
+            self._vaos.append(self.ctx.simple_vertex_array(self.program["circle"], self.vbos[num], "vertexPos"))
+
+    def vaos(self):
+        return self._vaos
+
+    def release(self):
+        [vbo.release() for vbo in self.vbos]
+        [vao.release() for vao in self._vaos]
