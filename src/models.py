@@ -1,5 +1,6 @@
 import glm
 import numpy as np
+import utils
 
 
 class Camera:
@@ -22,6 +23,9 @@ class Camera:
 
 
 class IconModel:
+    """
+    Vertex data for the 3D icon.
+    """
     __FIXED_POINT_FACTOR = 4096.0
 
     def __init__(self, ctx, program, icon):
@@ -75,6 +79,9 @@ class IconModel:
 
 
 class BgModel:
+    """
+    Vertex data for the background.
+    """
     __FIXED_COLOR_FACTOR = 255.0
     __FIXED_ALPHA_FACTOR = 128.0
 
@@ -116,3 +123,32 @@ class BgModel:
     def release(self):
         self.vbo.release()
         self._vao.release()
+
+
+class CircleModel:
+    """
+    Vertex data for the action button.
+    """
+
+    def __init__(self, ctx, program, n):
+        self.ctx = ctx
+        self.program = program
+        self.vbos = []
+        self._vaos = []
+        self.circle_centers = utils.circle_centers(n)
+        if self.circle_centers:
+            for circle_center in self.circle_centers:
+                vertex_data = utils.circle_data(circle_center)
+                vbo = self.ctx.buffer(vertex_data)
+                self.vbos.append(vbo)
+                self._vaos.append(self.ctx.simple_vertex_array(self.program["circle"], vbo, "vertexPos"))
+
+    def circle_centers(self):
+        return self.circle_centers
+
+    def vaos(self):
+        return self._vaos
+
+    def release(self):
+        [vbo.release() for vbo in self.vbos]
+        [vao.release() for vao in self._vaos]
