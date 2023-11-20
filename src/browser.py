@@ -48,7 +48,11 @@ class Browser:
         icon_sys_entry = [e for e in entries if e.is_file() and e.name == "icon.sys"][0]
         icon_sys = IconSys(self.ps2mc.read_data_cluster(icon_sys_entry))
 
-        icon_names = {icon_sys.icon_file_normal, icon_sys.icon_file_copy, icon_sys.icon_file_delete}
+        icon_names_ = [icon_sys.icon_file_normal, icon_sys.icon_file_copy, icon_sys.icon_file_delete]
+        icon_names = []
+        for icon_name in icon_names_:
+            if icon_name not in icon_names:
+                icon_names.append(icon_name)
         icon_entries = [[e for e in entries if e.is_file() and e.name == icon_name][0] for icon_name in icon_names]
         icons = [Icon(self.ps2mc.read_data_cluster(icon_entry)) for icon_entry in icon_entries]
         return icon_sys, icons

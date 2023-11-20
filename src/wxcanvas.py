@@ -1,4 +1,3 @@
-import random
 import time
 import wx
 from pathlib import Path
@@ -9,10 +8,11 @@ from wx import EVT_TIMER, Timer, glcanvas
 from wx.glcanvas import GLCanvas, GLContext
 
 from models import BgModel, Camera, IconModel, CircleModel
+import utils
 
 
 class WxCanvas(GLCanvas):
-    SIZE = (640, 480)
+    SIZE = (utils.CANVAS_WIDTH, utils.CANVAS_HEIGHT)
     FPS = 60
 
     def __init__(self, parent):
@@ -39,6 +39,7 @@ class WxCanvas(GLCanvas):
         self.icon = None
         self.start_time = 0
         self.vao_index = 0
+        self.circle_centers = []
 
         self.shader_program = dict()
         self.shader_program["bg"] = self.get_shader_program("bg")
@@ -53,12 +54,31 @@ class WxCanvas(GLCanvas):
         self.ticker = Timer(self)
         self.Bind(EVT_TIMER, self.on_tick, self.ticker)
         self.Bind(wx.EVT_LEFT_DOWN, self.on_left_down)
+        self.Bind(wx.EVT_MOTION, self.on_motion)
 
     def on_left_down(self, event):
-        x, y = event.GetPosition()
-        self.parent.statusbar.SetStatusText(
-            f"Mouse clicked at ({x}, {y})"
-        )
+        if self.circle_centers:
+            screen_x, screen_y = event.GetPosition()
+            index = utils.determine_circle_index(screen_x, screen_y, self.circle_centers)
+            if index is not None:
+                self.model["icon"].release()
+                self.icon = self.icons[index]
+                self.model["icon"] = IconModel(self.ctx, self.shader_program, self.icon)
+
+    def on_motion(self, event):
+        if self.circle_centers:
+            screen_x, screen_y = event.GetPosition()
+            ndc_x, ndc_y = utils.coord_convert(screen_x, screen_y)
+            distance = 100
+            for circle_center in self.circle_centers:
+                _distance = utils.distance(ndc_x, ndc_y, circle_center[0], circle_center[1])
+                if _distance < distance:
+                    distance = _distance
+
+            if distance <= utils.CIRCLE_RADIUS:
+                self.SetCursor(wx.Cursor(wx.CURSOR_HAND))
+            else:
+                self.SetCursor(wx.Cursor(wx.CURSOR_ARROW))
 
     def on_tick(self, evt):
         self.render()
@@ -69,6 +89,7 @@ class WxCanvas(GLCanvas):
         The program will release the old 'bg' and 'icon' resources and initialize new 'bg' and 'icon'.
         """
         self.ticker.Stop()
+        self.circle_centers = []
         [model.release() for model in self.model.values()]
         if self.start_time == 0:
             self.start_time = time.time()
@@ -77,7 +98,8 @@ class WxCanvas(GLCanvas):
 
         self.model["icon"] = IconModel(self.ctx, self.shader_program, self.icon)
         self.model["bg"] = BgModel(self.ctx, self.shader_program, self.icon_sys)
-        self.model["circles"] = CircleModel(self.ctx, self.shader_program, 3)
+        self.model["circles"] = CircleModel(self.ctx, self.shader_program, len(self.icons))
+        self.circle_centers = self.model["circles"].circle_centers
 
         self.shader_program["icon"]["proj"].write(self.camera.proj)
         self.shader_program["icon"]["view"].write(self.camera.view)
@@ -101,10 +123,9 @@ class WxCanvas(GLCanvas):
         self.update()
         self.model["bg"].vao().render()
         self.model["icon"].vao(self.vao_index).render()
-        for vao in self.model["circles"].vaos():
-            translation = (random.uniform(-1, 1), random.uniform(-1, 1))
-            self.shader_program["circle"]['translation'].value = translation
-            vao.render(mgl.TRIANGLE_FAN)
+        if self.model["circles"].vaos():
+            for vao in self.model["circles"].vaos():
+                vao.render(mgl.TRIANGLE_FAN)
         self.SwapBuffers()
 
     def update(self):
