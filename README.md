@@ -7,6 +7,7 @@ A PCSX2 memory card save file browser supports displaying 3D icons.
 
 ## What's New
 3D icons can exhibit different actions based on mouse interactions.
+
 ![](data/2.gif)
 
 ## Dependencies
