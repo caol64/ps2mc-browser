@@ -8,6 +8,12 @@ from error import Error
 
 class IconSys:
     """
+    The "icon.sys" file in the PS2 save file is a fixed-size file
+    that provides basic information about the 3D icon.
+    See https://babyno.top/posts/2023/10/parsing-ps2-3d-icon/ for details.
+
+    Structure:
+    ```
     struct IconSys {
         char magic[4];
         uint16 unknown; // ignore
@@ -31,6 +37,7 @@ class IconSys:
         char icon_file_delete[64];
         char zeros[512]; // ignore
     };
+    ```
     """
 
     __size = 964
@@ -38,7 +45,7 @@ class IconSys:
     __magic = b"PS2D"
     assert __size == __struct.size
 
-    def __init__(self, byte_val):
+    def __init__(self, byte_val: bytes):
         if len(byte_val) != IconSys.__size:
             raise Error("IconSys length invalid.")
         if not byte_val.startswith(IconSys.__magic):
@@ -79,6 +86,10 @@ class IconSys:
 
 
 class Icon:
+    """
+    The icon object stores the 3D icon's vertices, normals, textures,
+    animation frames, and other related information.
+    """
     __magic = 0x010000
     __animation_header_magic = 0x01
     __icon_header_struct = struct.Struct("<5I")
@@ -94,7 +105,7 @@ class Icon:
     __texture_size = __texture_width * __texture_height * 2
     __rgb_texture_size = __texture_width * __texture_height * 3
 
-    def __init__(self, byte_val):
+    def __init__(self, byte_val: bytes):
         self.byte_val = byte_val
         offset = 0
         icon_header = Icon.__icon_header_struct.unpack_from(byte_val, offset)
@@ -179,19 +190,24 @@ class Icon:
         print("frame_count", self.frame_count)
         # print('texture', len(self.texture))
 
-    def export_texture(self, dest):
+    def export_texture(self, dest: str):
+        """Utility method to export texture file associated with a specified game."""
         with open(dest, "wb") as f:
             f.write(self.texture)
 
-    def load_texture(self, offset):
+    def load_texture(self, offset: int) -> bytes:
+        """
+        Load texture according to the texture type.
+        """
         if self.tex_type & 0b1000 > 0:
             return self.load_texture_compressed(offset)
         else:
             return self.byte_val[offset: offset + Icon.__texture_size]
 
-    def load_texture_compressed(self, offset):
+    def load_texture_compressed(self, offset: int) -> bytes:
         """
-        See: https://babyno.top/posts/2023/10/rle-algorithm-in-ps2/
+        Load compressed texture.
+        See https://babyno.top/posts/2023/10/rle-algorithm-in-ps2/ for details.
         """
         compressed_size = struct.Struct("<I").unpack_from(self.byte_val, offset)[0]
         offset += 4
@@ -220,7 +236,8 @@ class Icon:
 
     def decode_texture(self):
         """
-        See: https://babyno.top/posts/2023/10/ps2-texture-encoding-algorithm-a1b5g5r5/
+        Decode texture with the Run-Length Encoding (RLE) algorithm.
+        See https://babyno.top/posts/2023/10/ps2-texture-encoding-algorithm-a1b5g5r5/ for details.
         """
         tex_offset = 0
         rgb_tex_offset = 0
