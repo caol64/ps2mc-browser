@@ -8,7 +8,7 @@ from error import Error
 
 class IconSys:
     """
-    The "icon.sys" file in the PS2 save file is a fixed-size file
+    The "icon.sys" in the PS2 save file is a fixed-size file
     that provides basic information about the 3D icon.
     See https://babyno.top/posts/2023/10/parsing-ps2-3d-icon/ for details.
 
@@ -89,6 +89,7 @@ class Icon:
     """
     The icon object stores the 3D icon's vertices, normals, textures,
     animation frames, and other related information.
+    See https://babyno.top/posts/2023/10/parsing-ps2-3d-icon/ for details.
     """
     __magic = 0x010000
     __animation_header_magic = 0x01
@@ -173,6 +174,7 @@ class Icon:
             self.decode_texture()
 
     def print_info(self):
+        """Utility method for debug."""
         np.set_printoptions(threshold=np.inf)
         np.set_printoptions(suppress=True)
         print("animation_shapes", self.animation_shapes)

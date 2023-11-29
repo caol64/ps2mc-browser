@@ -1,3 +1,4 @@
+from typing import List
 import wx
 
 from browser import Browser
@@ -5,6 +6,9 @@ from wxcanvas import WxCanvas
 
 
 class WxApp(wx.App):
+    """
+    The main application.
+    """
     def OnInit(self):
         frame = WxFrame("PS2 memory card browser")
         self.SetTopWindow(frame)
@@ -13,7 +17,11 @@ class WxApp(wx.App):
 
 
 class WxFrame(wx.Frame):
-    def __init__(self, title):
+    """
+    The main application window.
+    OpenGL canvas on the left, and the game list box on the right.
+    """
+    def __init__(self, title: str):
         frame_style = wx.DEFAULT_FRAME_STYLE & ~(wx.RESIZE_BORDER | wx.MAXIMIZE_BOX)
         wx.Frame.__init__(self, None, -1, title, style=frame_style)
         self.browser = None
@@ -23,10 +31,14 @@ class WxFrame(wx.Frame):
         self.panel = WxPanel(self)
         self.canvas = WxCanvas(self)
         self.statusbar = self.CreateStatusBar()
-        self.on_init()
         self.games = list()
+        self.on_init()
 
     def on_init(self):
+        self.setup_menu()
+        self.setup_layout()
+
+    def setup_menu(self):
         menubar = wx.MenuBar()
         menu = wx.Menu()
         menubar.Append(menu, "&File")
@@ -37,22 +49,25 @@ class WxFrame(wx.Frame):
         self.Bind(wx.EVT_MENU, self.on_exit, id=wx.ID_EXIT)
         self.Bind(wx.EVT_CLOSE, self.on_exit)
 
+    def setup_layout(self):
         sizer = wx.BoxSizer(wx.HORIZONTAL)
         sizer.Add(self.canvas)
         sizer.Add(self.panel)
         self.SetSizerAndFit(sizer)
 
-    def on_open_file(self, evt):
+    def on_open_file(self, evt: wx.Event):
+        """
+        Open a file dialog to select a PS2 memory card file.
+        """
         file_dialog = wx.FileDialog(
-            self, "Open", "", "", "(*.ps2)|*.ps2", wx.FD_OPEN | wx.FD_FILE_MUST_EXIST
+            self, "Open", "", "", "PS2 Memory Card Files (*.ps2)|*.ps2", wx.FD_OPEN | wx.FD_FILE_MUST_EXIST
         )
-        file_dialog.ShowModal()
-        self.mc_path = file_dialog.GetPath()
-        file_dialog.Destroy()
-        if self.mc_path is not None and self.mc_path != "":
+        if file_dialog.ShowModal() == wx.ID_OK:
+            self.mc_path = file_dialog.GetPath()
+            file_dialog.Destroy()
             self.refresh_all()
 
-    def on_exit(self, evt):
+    def on_exit(self, evt: wx.Event):
         if self.browser is not None:
             self.browser.destroy()
         self.canvas.destroy()
@@ -60,7 +75,7 @@ class WxFrame(wx.Frame):
 
     def refresh_all(self):
         """
-        When a new memory card image is selected, refresh the canvas and game list.
+        Refresh the canvas and game list when a new memory card image is selected.
         """
         if self.browser is not None:
             self.browser.destroy()
@@ -70,9 +85,12 @@ class WxFrame(wx.Frame):
         self.panel.update(self.games)
         self.update_selected_game(self.games[0])
 
-    def update_selected_game(self, game):
+    def update_selected_game(self, game: str):
         """
-        When a game is selected, refresh the canvas.
+        Update the canvas when a game is selected.
+
+        Parameters:
+            game (str):  The selected game title.
         """
         self.selected_game = game
         self.icon_sys, self.icons = self.browser.get_icon(game)
@@ -83,21 +101,32 @@ class WxFrame(wx.Frame):
 
 
 class WxPanel(wx.Panel):
-    def __init__(self, parent):
+    """
+    The panel containing the game list.
+    """
+    def __init__(self, parent: wx.Panel):
         wx.Panel.__init__(self, parent)
         self.parent = parent
-        self.lb = wx.ListBox(self, size=(250, 480))
-        self.Bind(wx.EVT_LISTBOX, self.on_select, self.lb)
+        self.list_box = wx.ListBox(self, size=(250, 480))
+        self.Bind(wx.EVT_LISTBOX, self.on_select, self.list_box)
 
-    def on_select(self, evt):
-        self.parent.update_selected_game(self.lb.GetStringSelection())
+    def on_select(self, evt: wx.Event):
+        """
+        Handle the selection event of the game list box.
+        """
+        self.parent.update_selected_game(self.list_box.GetStringSelection())
 
-    def update(self, games):
-        self.lb.Clear()
-        if games is not None and len(games) > 0:
-            for game in games:
-                self.lb.Append(game)
-            self.lb.Select(0)
+    def update(self, games: List[str]):
+        """
+        Update the game list box.
+
+        Parameters:
+            games (List[str]):  The game titles to be displayed in the list box.
+        """
+        self.list_box.Clear()
+        if games:
+            self.list_box.AppendItems(games)
+            self.list_box.Select(0)
 
 
 if __name__ == "__main__":

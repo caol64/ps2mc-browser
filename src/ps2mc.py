@@ -42,7 +42,7 @@ class Ps2mc:
         Open and read information from the PS2 memory card file.
 
         Returns:
-        Tuple: Information about the memory card file.
+            Tuple: Information about the memory card file.
         """
         with open(self.file_path, "rb") as f:
             byte_val = f.read()
@@ -64,7 +64,7 @@ class Ps2mc:
         - n (int): Page number.
 
         Returns:
-        bytes: Data read from the specified page.
+            bytes: Data read from the specified page.
         """
         offset = self.raw_page_size * n
         return self.byte_val[offset: offset + self.page_size]
@@ -77,7 +77,7 @@ class Ps2mc:
         - n (int): Cluster number.
 
         Returns:
-        bytes: Data read from the specified cluster.
+            bytes: Data read from the specified cluster.
         """
         page_index = n * self.pages_per_cluster
         byte_buffer = bytearray()
@@ -93,7 +93,7 @@ class Ps2mc:
         - n (int): Cluster number.
 
         Returns:
-        int: FAT value for the specified cluster.
+            int: FAT value for the specified cluster.
         """
         value = self.fat_matrix[
             (n // self.fat_per_cluster) % self.fat_per_cluster, n % self.fat_per_cluster
@@ -118,7 +118,7 @@ class Ps2mc:
         - cluster_offset (int): Relative offset of the cluster.
 
         Returns:
-        List[Entry]: List of entry objects.
+            List[Entry]: List of entry objects.
         """
         cluster_value = self.read_cluster(cluster_offset + self.alloc_offset)
         return Entry.build(cluster_value)
@@ -131,7 +131,7 @@ class Ps2mc:
         - parent_entry (Entry): Parent entry.
 
         Returns:
-        List[Entry]: List of sub-entries.
+            List[Entry]: List of sub-entries.
         """
         chain_start = parent_entry.cluster
         sub_entries = []
@@ -151,7 +151,7 @@ class Ps2mc:
         - entry (Entry): Entry object representing the file.
 
         Returns:
-        bytes: Data bytes of the file.
+            bytes: Data bytes of the file.
         """
         byte_buffer = bytearray()
         chain_start = entry.cluster
@@ -171,7 +171,7 @@ class Ps2mc:
         - cluster_list (List[int]): List of cluster values.
 
         Returns:
-        np.ndarray: Matrix representation of the cluster values.
+            np.ndarray: Matrix representation of the cluster values.
         """
         matrix = np.zeros((len(cluster_list), self.fat_per_cluster), np.uint32)
         for index, v in enumerate(cluster_list):
@@ -186,7 +186,7 @@ class Ps2mc:
         Build the file allocation table (FAT) matrix.
 
         Returns:
-        np.ndarray: Matrix representation of the FAT.
+            np.ndarray: Matrix representation of the FAT.
         """
         indirect_fat_matrix = self.__build_matrix(self.ifc_list)
         indirect_fat_matrix = indirect_fat_matrix.reshape(indirect_fat_matrix.size)

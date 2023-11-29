@@ -1,5 +1,8 @@
+from typing import List, Tuple
 import glm
+import moderngl as mgl
 import numpy as np
+from icon import Icon, IconSys
 import utils
 
 
@@ -12,7 +15,7 @@ class Camera:
     NEAR = 0.1
     FAR = 100
 
-    def __init__(self, win_size):
+    def __init__(self, win_size: Tuple[int, int]):
         self.aspect_ratio = win_size[0] / win_size[1]
         self.position = glm.vec3(0, -4.0, -10)
         self.up = glm.vec3(0, -1, 0)
@@ -26,9 +29,11 @@ class IconModel:
     """
     Vertex data for the 3D icon.
     """
+
+    # See https://babyno.top/posts/2023/10/parsing-ps2-3d-icon/ for details.
     __FIXED_POINT_FACTOR = 4096.0
 
-    def __init__(self, ctx, program, icon):
+    def __init__(self, ctx: mgl.Context, program: mgl.Program, icon: Icon):
         self.vbos = []
         self._vaos = []
         for i in range(icon.animation_shapes):
@@ -68,7 +73,7 @@ class IconModel:
             self.texture = ctx.texture(size=(128, 128), data=texture_data, components=3)
             self.texture.use()
 
-    def vao(self, n):
+    def vao(self, n: int) -> List[mgl.VertexArray]:
         return self._vaos[n]
 
     def release(self):
@@ -85,7 +90,7 @@ class BgModel:
     __FIXED_COLOR_FACTOR = 255.0
     __FIXED_ALPHA_FACTOR = 128.0
 
-    def __init__(self, ctx, program, icon_sys):
+    def __init__(self, ctx: mgl.Context, program: mgl.Program, icon_sys: IconSys):
         self.ctx = ctx
         self.program = program
         alpha = icon_sys.background_transparency / BgModel.__FIXED_ALPHA_FACTOR
@@ -117,7 +122,7 @@ class BgModel:
             self.program["bg"], [(self.vbo, "3f2 4f2", "vertexPos", "vertexColor")]
         )
 
-    def vao(self):
+    def vao(self) -> mgl.VertexArray:
         return self._vao
 
     def release(self):
@@ -130,7 +135,7 @@ class CircleModel:
     Vertex data for the action button.
     """
 
-    def __init__(self, ctx, program, n):
+    def __init__(self, ctx: mgl.Context, program: mgl.Program, n: int):
         self.ctx = ctx
         self.program = program
         self.vbos = []
@@ -143,10 +148,10 @@ class CircleModel:
                 self.vbos.append(vbo)
                 self._vaos.append(self.ctx.simple_vertex_array(self.program["circle"], vbo, "vertexPos"))
 
-    def circle_centers(self):
+    def circle_centers(self) -> Tuple[float, float]:
         return self.circle_centers
 
-    def vaos(self):
+    def vaos(self) -> mgl.VertexArray:
         return self._vaos
 
     def release(self):
