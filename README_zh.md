@@ -32,6 +32,7 @@ python3 wxwindow.py
 - [使用Python和OpenGL渲染PS2存档3D图标](https://babyno.top/posts/2023/10/rendering-ps2-3d-icon/)
 - [RLE算法在PS2中的应用](https://babyno.top/posts/2023/10/rle-algorithm-in-ps2/)
 - [PS2纹理图片编码算法A1B5G5R5](https://babyno.top/posts/2023/10/ps2-texture-encoding-algorithm-a1b5g5r5/)
+- [ps2mc-browser的着色器代码分析](https://babyno.top/posts/2023/12/ps2mc-browsers-shader-introduction/)
 
 ## 参考
 - [gothi - icon.sys format](https://www.ps2savetools.com/documents/iconsys-format/)

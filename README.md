@@ -32,6 +32,7 @@ Run the above command to open a GUI window. From the menu bar, select `Open File
 - [Render the 3D icons of PS2 game save files using Python and OpenGL](https://babyno.top/posts/2023/10/rendering-ps2-3d-icon/)
 - [Implementation of RLE algorithm in PS2](https://babyno.top/posts/2023/10/rle-algorithm-in-ps2/)
 - [Texture image encoding algorithm A1B5G5R5 in PS2](https://babyno.top/posts/2023/10/ps2-texture-encoding-algorithm-a1b5g5r5/)
+- [Analysis of Shader Code in PS2MC-Browser](https://babyno.top/posts/2023/12/ps2mc-browsers-shader-introduction/)
 
 
 ## Reference
