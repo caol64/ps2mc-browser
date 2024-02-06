@@ -1,12 +1,14 @@
 # ps2mc-browser
 [English](README.md) | 中文
 
-![](https://cdn.jsdelivr.net/gh/caol64/ps2mc-browser/data/1.gif)
+![](data/1.gif)
 
-`PCSX2`存档查看器，支持显示存档里的3D动态图标。
+`ps2mc-browser` 是一个 `PS2` 存档文件查看器，它可以解析 `PS2` 存档中的 `3D` 图标的顶点和纹理等数据，然后利用 `OpenGL` 的能力将图标渲染出来。
+
+如果你熟悉 `PS2` 或者对 `PS2` 存档有一定的了解，`ps2mc-browser` 会是一个非常有用的工具。它不仅可以帮助你查看和理解存档文件的结构，还能将这些存档在画布上以 `3D` 图标的形式展出。
 
 ## 新特性
-3d图标可以根据鼠标的交互变化不同的动作。
+3D图标可以根据鼠标的交互变化不同的动作。
 
 ![](data/2.gif)
 
@@ -23,7 +25,7 @@ ps2mc-browser依赖如下：
 python3 wxwindow.py
 ```
 
-在命令行输入上述命令，会打开GUI窗口。在顶部菜单栏选择`Open File`并且选择你电脑硬盘上的`PCSX2`存档。
+在命令行输入上述命令，会打开GUI窗口。在顶部菜单栏选择 `Open File` 并且选择你电脑硬盘上的 `PS2` 存档。
 
 ## 文档
 - [解析PS2记忆卡文件系统](https://babyno.top/posts/2023/09/parsing-ps2-memcard-file-system/)

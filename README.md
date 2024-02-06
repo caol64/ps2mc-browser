@@ -1,10 +1,11 @@
 # ps2mc-browser
 English | [中文](README_zh.md)
 
-![](https://cdn.jsdelivr.net/gh/caol64/ps2mc-browser/data/1.gif)
+![](data/1.gif)
 
-A PCSX2 memory card save file browser supports displaying 3D icons.
+`ps2mc-browser` is a `PS2` save file viewer that can parse the vertices and texture data of 3D icons in `PS2` saves, and then render the icons using OpenGL's capabilities.
 
+If you're familiar with `PS2` or have a certain understanding of `PS2` save files, `ps2mc-browser` can be a very useful tool. It can not only help you view and understand the structure of the save files, but also display these saves on the canvas in the form of 3D icons.
 ## What's New
 3D icons can exhibit different actions based on mouse interactions.
 
