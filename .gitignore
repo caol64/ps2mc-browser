@@ -9,3 +9,4 @@ __pycache__/
 **/*.iml
 *test.py
 .pytest_cache
+.venv
