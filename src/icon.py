@@ -10,7 +10,7 @@ class IconSys:
     """
     The "icon.sys" in the PS2 save file is a fixed-size file
     that provides basic information about the 3D icon.
-    See https://babyno.top/posts/2023/10/parsing-ps2-3d-icon/ for details.
+    See https://babyno.top/en/posts/2023/10/parsing-ps2-3d-icon/ for details.
 
     Structure:
     ```
@@ -89,7 +89,7 @@ class Icon:
     """
     The icon object stores the 3D icon's vertices, normals, textures,
     animation frames, and other related information.
-    See https://babyno.top/posts/2023/10/parsing-ps2-3d-icon/ for details.
+    See https://babyno.top/en/posts/2023/10/parsing-ps2-3d-icon/ for details.
     """
     __magic = 0x010000
     __animation_header_magic = 0x01
@@ -209,7 +209,7 @@ class Icon:
     def load_texture_compressed(self, offset: int) -> bytes:
         """
         Load compressed texture.
-        See https://babyno.top/posts/2023/10/rle-algorithm-in-ps2/ for details.
+        See https://babyno.top/en/posts/2023/10/rle-algorithm-in-ps2/ for details.
         """
         compressed_size = struct.Struct("<I").unpack_from(self.byte_val, offset)[0]
         offset += 4
@@ -239,7 +239,7 @@ class Icon:
     def decode_texture(self):
         """
         Decode texture with the Run-Length Encoding (RLE) algorithm.
-        See https://babyno.top/posts/2023/10/ps2-texture-encoding-algorithm-a1b5g5r5/ for details.
+        See https://babyno.top/en/posts/2023/10/ps2-texture-encoding-algorithm-a1b5g5r5/ for details.
         """
         tex_offset = 0
         rgb_tex_offset = 0

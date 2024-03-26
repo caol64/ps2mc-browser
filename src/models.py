@@ -30,7 +30,7 @@ class IconModel:
     Vertex data for the 3D icon.
     """
 
-    # See https://babyno.top/posts/2023/10/parsing-ps2-3d-icon/ for details.
+    # See https://babyno.top/en/posts/2023/10/parsing-ps2-3d-icon/ for details.
     __FIXED_POINT_FACTOR = 4096.0
 
     def __init__(self, ctx: mgl.Context, program: mgl.Program, icon: Icon):

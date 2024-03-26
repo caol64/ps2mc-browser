@@ -22,6 +22,7 @@ ps2mc-browser依赖如下：
 
 ## 快速开始
 ```shell
+pip install -r requirements.txt
 python3 wxwindow.py
 ```
 

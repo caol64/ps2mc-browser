@@ -11,7 +11,7 @@ class Ps2mc:
     """
     Represents interfaces for interacting with PS2 memory card files.
     Provides management and operations for the `page`, `cluster`, and `fat` objects.
-    See https://babyno.top/posts/2023/09/parsing-ps2-memcard-file-system/ for details.
+    See https://babyno.top/en/posts/2023/09/parsing-ps2-memcard-file-system/ for details.
     """
     def __init__(self, file_path: str):
         """
@@ -210,7 +210,7 @@ class SuperBlock:
     """
     The SuperBlock is a section located at the beginning of
     the PS2 memory card file with a fixed structure.
-    See https://babyno.top/posts/2023/09/parsing-ps2-memcard-file-system/ for details.
+    See https://babyno.top/en/posts/2023/09/parsing-ps2-memcard-file-system/ for details.
 
     Attributes:
     - __size (int): Size of the superblock structure.
@@ -275,7 +275,7 @@ class SuperBlock:
 class Entry:
     """
     An Entry is metadata for the PS2 memory card file objects.
-    See https://babyno.top/posts/2023/09/parsing-ps2-memcard-file-system/ for details.
+    See https://babyno.top/en/posts/2023/09/parsing-ps2-memcard-file-system/ for details.
 
     Attributes:
     - MODE_PROTECTED (int): Mode flag for protected entries.
@@ -370,7 +370,7 @@ class Entry:
 class Fat:
     """
     Represents constants and operations related to the file allocation table (FAT).
-    See https://babyno.top/posts/2023/09/parsing-ps2-memcard-file-system/ for details.
+    See https://babyno.top/en/posts/2023/09/parsing-ps2-memcard-file-system/ for details.
 
     Attributes:
     - ALLOCATED_BIT (int): Bit indicating allocated clusters.
