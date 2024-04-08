@@ -21,8 +21,8 @@ The dependencies are listed below:
 
 ## Quick Start
 ```shell
-pip install -r requirements.txt
-python3 wxwindow.py
+python3 -m pip install -r requirements.txt
+cd src && python3 wxwindow.py
 ```
 
 Run the above command to open a GUI window. From the menu bar, select `Open File` and then select the `.ps2` file from your computer.

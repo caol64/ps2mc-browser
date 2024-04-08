@@ -22,8 +22,8 @@ ps2mc-browser依赖如下：
 
 ## 快速开始
 ```shell
-pip install -r requirements.txt
-python3 wxwindow.py
+python3 -m pip install -r requirements.txt
+cd src && python3 wxwindow.py
 ```
 
 在命令行输入上述命令，会打开GUI窗口。在顶部菜单栏选择 `Open File` 并且选择你电脑硬盘上的 `PS2` 存档。
