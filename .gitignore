@@ -10,3 +10,4 @@ __pycache__/
 *test.py
 .pytest_cache
 .venv
+ps2mc-browser.spec
