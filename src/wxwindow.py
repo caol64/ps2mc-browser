@@ -1,3 +1,4 @@
+import os
 from typing import List
 import wx
 
@@ -99,6 +100,13 @@ class WxFrame(wx.Frame):
         )
         self.canvas.refresh(self.icon_sys, self.icons)
 
+    def export_files(self, game: str, file_path: str):
+        try:
+            self.browser.export(game, file_path)
+            wx.MessageBox(f"File saved successfully at:\n{file_path}", "Success", wx.OK | wx.ICON_INFORMATION)
+        except Exception as e:
+            wx.MessageBox(f"Failed to save file:\n{str(e)}", "Error", wx.OK | wx.ICON_ERROR)
+
 
 class WxPanel(wx.Panel):
     """
@@ -109,6 +117,8 @@ class WxPanel(wx.Panel):
         self.parent = parent
         self.list_box = wx.ListBox(self, size=(250, 480))
         self.Bind(wx.EVT_LISTBOX, self.on_select, self.list_box)
+        # Bind the right-click event
+        self.list_box.Bind(wx.EVT_CONTEXT_MENU, self.on_right_click)
 
     def on_select(self, evt: wx.Event):
         """
@@ -127,6 +137,85 @@ class WxPanel(wx.Panel):
         if games:
             self.list_box.AppendItems(games)
             self.list_box.Select(0)
+
+    def on_right_click(self, event: wx.Event):
+        """
+        Handle the right-click event to show a popup menu.
+        """
+        # Create the popup menu
+        menu = wx.Menu()
+        
+        menu_item1 = menu.Append(wx.ID_ANY, "Export files...")
+        # menu_item2 = menu.Append(wx.ID_ANY, "Export psu file...")
+        # menu_item3 = menu.Append(wx.ID_ANY, "Action 3")
+        
+        # Bind menu item events
+        self.Bind(wx.EVT_MENU, self.export_files, menu_item1)
+        # self.Bind(wx.EVT_MENU, self.export_psu_file, menu_item2)
+        # self.Bind(wx.EVT_MENU, self.on_action_3, menu_item3)
+
+        # Show the popup menu
+        self.PopupMenu(menu)
+        menu.Destroy()
+
+    def export_files(self, event: wx.Event):
+        """
+        Handle the 'Save File' action:
+        - Prompt the user to select a directory.
+        - Create a subdirectory 'folder' within the selected directory.
+        - Save a file into the subdirectory.
+        - Prompt the user if the subdirectory already exists.
+        """
+        with wx.DirDialog(
+            self,
+            "Select Directory to Save File",
+            style=wx.DD_DEFAULT_STYLE | wx.DD_DIR_MUST_EXIST,
+        ) as dir_dialog:
+            if dir_dialog.ShowModal() == wx.ID_OK:
+                game = self.list_box.GetStringSelection()
+                # Get the directory path selected by the user
+                dir_path = dir_dialog.GetPath()
+                folder_path = f"{dir_path}/{game}"
+                
+                # Check if 'folder' already exists
+                if os.path.exists(folder_path):
+                    overwrite = wx.MessageBox(
+                        f"The folder '{folder_path}' already exists. Do you want to overwrite it?",
+                        "Folder Exists",
+                        wx.YES_NO | wx.ICON_QUESTION
+                    )
+                    if overwrite != wx.YES:
+                        return  # User chose not to overwrite
+                
+                self.parent.export_files(game, dir_path)
+
+    # def export_psu_file(self, event: wx.Event):
+    #     """
+    #     Handle the 'Save File' action by opening a save file dialog
+    #     and writing a sample file to the selected directory.
+    #     """
+    #     with wx.FileDialog(
+    #         self,
+    #         "Save File",
+    #         wildcard="Text files (*.txt)|*.txt|All files (*.*)|*.*",
+    #         style=wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT,
+    #     ) as save_dialog:
+    #         if save_dialog.ShowModal() == wx.ID_OK:
+    #             # Get the file path selected by the user
+    #             file_path = save_dialog.GetPath()
+                
+    #             try:
+    #                 # Write a sample file to the selected path
+    #                 with open(file_path, "w") as file:
+    #                     file.write("This is a sample file saved from wxPython.")
+                    
+    #                 wx.MessageBox(f"File saved successfully at:\n{file_path}", "Success", wx.OK | wx.ICON_INFORMATION)
+    #             except Exception as e:
+    #                 wx.MessageBox(f"Failed to save file:\n{str(e)}", "Error", wx.OK | wx.ICON_ERROR)
+
+    # def on_action_3(self, event: wx.Event):
+    #     wx.MessageBox("You selected Action 3!")
+
 
 
 if __name__ == "__main__":
