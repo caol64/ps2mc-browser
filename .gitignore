@@ -11,3 +11,4 @@ __pycache__/
 .pytest_cache
 .venv
 ps2mc-browser.spec
+.env

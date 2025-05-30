@@ -1,26 +1,46 @@
 [project]
 name = "ps2mc-browser"
-version = "0.1.0"
+version = "1.0.0"
 description = "A PS2 save file viewer with OpenGL 3D icon rendering support."
 authors = [{ name = "Lei", email = "caol64@gmail.com" }]
 readme = "README.md"
 requires-python = ">=3.10"
-license = { text = "MIT" }
+license = "MIT"
 dependencies = [
     "moderngl==5.8.2",
     "numpy==1.26.4",
     "PyGLM==2.7.1",
     "wxPython==4.2.1"
 ]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Environment :: X11 Applications :: GTK",
+    "Environment :: MacOS X :: Cocoa",
+    "Environment :: Win32 (MS Windows)",
+    "Intended Audience :: End Users/Desktop",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Multimedia :: Graphics",
+    "Topic :: Software Development :: User Interfaces",
+    "Topic :: Utilities"
+]
 
 [project.optional-dependencies]
 dev = [
     "pyinstaller==6.11.1",
-    "tomli==2.2.1"
+    "tomli==2.2.1",
+    "build==1.2.2"
 ]
 
 [project.scripts]
 ps2mc-browser = "ps2mc_browser.wxwindow:main"
+
+[project.urls]
+Homepage = "https://github.com/caol64/ps2mc-browser"
 
 [build-system]
 requires = ["hatchling"]
@@ -28,6 +48,13 @@ build-backend = "hatchling.build"
 
 [tool.hatch.build]
 exclude = ["/data"]
+
+[tool.hatch.build.targets.sdist]
+include = [
+    "/src/ps2mc_browser",
+    "/README.md",
+    "/pyproject.toml",
+]
 
 [tool.pyinstaller]
 app_name = "ps2mc-browser"
