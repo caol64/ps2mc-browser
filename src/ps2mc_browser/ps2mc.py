@@ -3,8 +3,8 @@ from typing import List
 
 import numpy as np
 
-import utils
-from error import Error
+import ps2mc_browser.utils as utils
+from .error import Error
 
 
 class Ps2mc:

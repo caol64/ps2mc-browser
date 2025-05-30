@@ -1,9 +1,9 @@
 import os
 from typing import List, Tuple
 
-from error import Error
-from icon import Icon, IconSys
-from ps2mc import Entry, Ps2mc
+from .error import Error
+from .icon import Icon, IconSys
+from .ps2mc import Entry, Ps2mc
 
 
 class Browser:

@@ -14,7 +14,7 @@
 
 ## 依赖
 ps2mc-browser依赖如下：
-- Python3
+- Python3.10
 - WxPython
 - Numpy
 - ModernGL
@@ -22,8 +22,10 @@ ps2mc-browser依赖如下：
 
 ## 快速开始
 ```shell
-python3 -m pip install -r requirements.txt
-cd src && python3 wxwindow.py
+uv pip install .
+uv run ps2mc-browser
+# or you don't use uv
+python -m ps2mc_browser.wxwindow
 ```
 
 在命令行输入上述命令，会打开GUI窗口。在顶部菜单栏选择 `Open File` 并且选择你电脑硬盘上的 `PS2` 存档。

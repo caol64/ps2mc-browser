@@ -2,8 +2,8 @@ import os
 from typing import List
 import wx
 
-from browser import Browser
-from wxcanvas import WxCanvas
+from .browser import Browser
+from .wxcanvas import WxCanvas
 
 
 class WxApp(wx.App):
@@ -144,11 +144,11 @@ class WxPanel(wx.Panel):
         """
         # Create the popup menu
         menu = wx.Menu()
-        
+
         menu_item1 = menu.Append(wx.ID_ANY, "Export files...")
         # menu_item2 = menu.Append(wx.ID_ANY, "Export psu file...")
         # menu_item3 = menu.Append(wx.ID_ANY, "Action 3")
-        
+
         # Bind menu item events
         self.Bind(wx.EVT_MENU, self.export_files, menu_item1)
         # self.Bind(wx.EVT_MENU, self.export_psu_file, menu_item2)
@@ -176,7 +176,7 @@ class WxPanel(wx.Panel):
                 # Get the directory path selected by the user
                 dir_path = dir_dialog.GetPath()
                 folder_path = f"{dir_path}/{game}"
-                
+
                 # Check if 'folder' already exists
                 if os.path.exists(folder_path):
                     overwrite = wx.MessageBox(
@@ -186,7 +186,7 @@ class WxPanel(wx.Panel):
                     )
                     if overwrite != wx.YES:
                         return  # User chose not to overwrite
-                
+
                 self.parent.export_files(game, dir_path)
 
     # def export_psu_file(self, event: wx.Event):
@@ -203,12 +203,12 @@ class WxPanel(wx.Panel):
     #         if save_dialog.ShowModal() == wx.ID_OK:
     #             # Get the file path selected by the user
     #             file_path = save_dialog.GetPath()
-                
+
     #             try:
     #                 # Write a sample file to the selected path
     #                 with open(file_path, "w") as file:
     #                     file.write("This is a sample file saved from wxPython.")
-                    
+
     #                 wx.MessageBox(f"File saved successfully at:\n{file_path}", "Success", wx.OK | wx.ICON_INFORMATION)
     #             except Exception as e:
     #                 wx.MessageBox(f"Failed to save file:\n{str(e)}", "Error", wx.OK | wx.ICON_ERROR)
@@ -217,7 +217,10 @@ class WxPanel(wx.Panel):
     #     wx.MessageBox("You selected Action 3!")
 
 
-
-if __name__ == "__main__":
+def main():
     app = WxApp(False)
     app.MainLoop()
+
+
+if __name__ == "__main__":
+    main()

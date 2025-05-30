@@ -1,16 +1,16 @@
 import time
 from typing import List
 import wx
-from pathlib import Path
+import importlib.resources
 
 import glm
 import moderngl as mgl
 from wx import EVT_TIMER, Timer, glcanvas
 from wx.glcanvas import GLCanvas, GLContext
-from icon import Icon, IconSys
+from .icon import Icon, IconSys
 
-from models import BgModel, Camera, IconModel, CircleModel
-import utils
+from .models import BgModel, Camera, IconModel, CircleModel
+import ps2mc_browser.utils as utils
 
 
 class WxCanvas(GLCanvas):
@@ -216,10 +216,12 @@ class WxCanvas(GLCanvas):
         Returns:
             mgl.Program: Shader program instance.
         """
-        with open(Path(__file__).parent / f"shaders/{shader_name}.vert") as file:
-            vertex_shader = file.read()
-        with open(Path(__file__).parent / f"shaders/{shader_name}.frag") as file:
-            fragment_shader = file.read()
+        with importlib.resources.path("ps2mc_browser.shaders", f"{shader_name}.vert") as file_path:
+            with open(file_path) as file:
+                vertex_shader = file.read()
+        with importlib.resources.path("ps2mc_browser.shaders", f"{shader_name}.frag") as file_path:
+            with open(file_path) as file:
+                fragment_shader = file.read()
         program = self.ctx.program(
             vertex_shader=vertex_shader, fragment_shader=fragment_shader
         )

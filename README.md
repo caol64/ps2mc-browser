@@ -13,7 +13,7 @@ If you're familiar with `PS2` or have a certain understanding of `PS2` save file
 
 ## Dependencies
 The dependencies are listed below:
-- Python3
+- Python3.10
 - WxPython
 - Numpy
 - ModernGL
@@ -21,8 +21,10 @@ The dependencies are listed below:
 
 ## Quick Start
 ```shell
-python3 -m pip install -r requirements.txt
-cd src && python3 wxwindow.py
+uv pip install .
+uv run ps2mc-browser
+# or you don't use uv
+python -m ps2mc_browser.wxwindow
 ```
 
 Run the above command to open a GUI window. From the menu bar, select `Open File` and then select the `.ps2` file from your computer.

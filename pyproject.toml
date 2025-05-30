@@ -1,0 +1,38 @@
+[project]
+name = "ps2mc-browser"
+version = "0.1.0"
+description = "A PS2 save file viewer with OpenGL 3D icon rendering support."
+authors = [{ name = "Lei", email = "caol64@gmail.com" }]
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+dependencies = [
+    "moderngl==5.8.2",
+    "numpy==1.26.4",
+    "PyGLM==2.7.1",
+    "wxPython==4.2.1"
+]
+
+[project.optional-dependencies]
+dev = [
+    "pyinstaller==6.11.1",
+    "tomli==2.2.1"
+]
+
+[project.scripts]
+ps2mc-browser = "ps2mc_browser.wxwindow:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build]
+exclude = ["/data"]
+
+[tool.pyinstaller]
+app_name = "ps2mc-browser"
+entry_point = "launcher.py"
+onefile = true
+windowed = true
+hidden_imports = ["glcontext"]
+add_data = ["src/ps2mc_browser/shaders:ps2mc_browser/shaders"]

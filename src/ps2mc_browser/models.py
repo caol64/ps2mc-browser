@@ -2,8 +2,8 @@ from typing import List, Tuple
 import glm
 import moderngl as mgl
 import numpy as np
-from icon import Icon, IconSys
-import utils
+from .icon import Icon, IconSys
+import ps2mc_browser.utils as utils
 
 
 class Camera:
