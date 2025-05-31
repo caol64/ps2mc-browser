@@ -31,6 +31,9 @@ uv run ps2mc-browser
 
 在命令行输入上述命令，会打开GUI窗口。在顶部菜单栏选择 `Open File` 并且选择你电脑硬盘上的 `PS2` 存档。
 
+你也可以直接下载预编译的安装包:
+👉 [https://github.com/caol64/ps2mc-browser/releases](https://github.com/caol64/ps2mc-browser/releases)
+
 ## 文档
 - [解析PS2记忆卡文件系统](https://babyno.top/posts/2023/09/parsing-ps2-memcard-file-system/)
 - [从PS2记忆卡中导出存档文件](https://babyno.top/posts/2023/09/exporting-file-from-ps2-memcard/)

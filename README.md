@@ -30,6 +30,9 @@ uv run ps2mc-browser
 
 Run the above command to open a GUI window. From the menu bar, select `Open File` and then select the `.ps2` file from your computer.
 
+Alternatively, you can download the latest prebuilt releases from GitHub:
+👉 [https://github.com/caol64/ps2mc-browser/releases](https://github.com/caol64/ps2mc-browser/releases)
+
 ## Documentation
 - [Analyze the file system of the PS2 memory card](https://babyno.top/en/posts/2023/09/parsing-ps2-memcard-file-system/)
 - [Export save files from the PS2 memory card](https://babyno.top/en/posts/2023/09/exporting-file-from-ps2-memcard/)
