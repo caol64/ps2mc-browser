@@ -21,11 +21,12 @@ ps2mc-browser依赖如下：
 - PyGlm
 
 ## 快速开始
+推荐使用`uv`创建虚拟环境运行。
+
 ```shell
-uv pip install .
+uv venv --python python3.10
+uv pip install ps2mc-browser
 uv run ps2mc-browser
-# or you don't use uv
-python -m ps2mc_browser.wxwindow
 ```
 
 在命令行输入上述命令，会打开GUI窗口。在顶部菜单栏选择 `Open File` 并且选择你电脑硬盘上的 `PS2` 存档。

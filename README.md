@@ -20,11 +20,12 @@ The dependencies are listed below:
 - PyGlm
 
 ## Quick Start
+It is recommended to use `uv` to create and run in a virtual environment.
+
 ```shell
-uv pip install .
+uv venv --python python3.10
+uv pip install ps2mc-browser
 uv run ps2mc-browser
-# or you don't use uv
-python -m ps2mc_browser.wxwindow
 ```
 
 Run the above command to open a GUI window. From the menu bar, select `Open File` and then select the `.ps2` file from your computer.
