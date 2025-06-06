@@ -2,7 +2,7 @@ import os
 from typing import List
 import wx
 
-from .browser import Browser
+from ps2mc.browser import Browser
 from .wxcanvas import WxCanvas
 
 
@@ -70,7 +70,7 @@ class WxFrame(wx.Frame):
 
     def on_exit(self, evt: wx.Event):
         if self.browser is not None:
-            self.browser.destroy()
+            self.browser.close()
         self.canvas.destroy()
         self.Destroy()
 
@@ -79,7 +79,7 @@ class WxFrame(wx.Frame):
         Refresh the canvas and game list when a new memory card image is selected.
         """
         if self.browser is not None:
-            self.browser.destroy()
+            self.browser.close()
         self.browser = Browser(self.mc_path)
         root_dirs = self.browser.list_root_dir()
         self.games = [x.name for x in root_dirs]

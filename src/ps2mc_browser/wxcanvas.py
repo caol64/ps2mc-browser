@@ -7,10 +7,10 @@ import glm
 import moderngl as mgl
 from wx import EVT_TIMER, Timer, glcanvas
 from wx.glcanvas import GLCanvas, GLContext
-from .icon import Icon, IconSys
+from ps2mc.icon import Icon, IconSys
 
 from .models import BgModel, Camera, IconModel, CircleModel
-import ps2mc_browser.utils as utils
+from . import utils
 
 
 class WxCanvas(GLCanvas):

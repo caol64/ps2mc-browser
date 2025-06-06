@@ -2,8 +2,8 @@ from typing import List, Tuple
 import glm
 import moderngl as mgl
 import numpy as np
-from .icon import Icon, IconSys
-import ps2mc_browser.utils as utils
+from ps2mc.icon import Icon, IconSys
+from . import utils
 
 
 class Camera:
@@ -40,14 +40,7 @@ class IconModel:
             h = i + 1
             if h >= icon.animation_shapes:
                 h = 0
-            vertex_data = np.hstack(
-                (
-                    icon.vertex_data[..., i, :3],
-                    icon.vertex_data[..., h, :3],
-                    icon.uv_data,
-                    icon.normal_data[..., :3],
-                )
-            )
+            vertex_data = utils.convert_vertex_data(icon, i, h)
             vertex_data /= IconModel.__FIXED_POINT_FACTOR
             vertex_data = vertex_data.astype("f2")
             self.vbos.append(ctx.buffer(vertex_data))
