@@ -11,14 +11,6 @@ If you're familiar with `PS2` or have a certain understanding of `PS2` save file
 
 ![](data/2.gif)
 
-## Dependencies
-The dependencies are listed below:
-- Python3.10
-- WxPython
-- Numpy
-- ModernGL
-- PyGlm
-
 ## Quick Start
 It is recommended to use `uv` to create and run in a virtual environment.
 
@@ -32,6 +24,14 @@ Run the above command to open a GUI window. From the menu bar, select `Open File
 
 Alternatively, you can download the latest prebuilt releases from GitHub:
 👉 [https://github.com/caol64/ps2mc-browser/releases](https://github.com/caol64/ps2mc-browser/releases)
+
+## Screenshots
+
+![](data/1.jpg)
+
+![](data/2.jpg)
+
+![](data/3.jpg)
 
 ## Documentation
 - [Analyze the file system of the PS2 memory card](https://babyno.top/en/posts/2023/09/parsing-ps2-memcard-file-system/)

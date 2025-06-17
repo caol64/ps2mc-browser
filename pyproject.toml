@@ -1,6 +1,6 @@
 [project]
 name = "ps2mc-browser"
-version = "1.0.1"
+version = "1.0.2"
 description = "A PS2 save file viewer with OpenGL 3D icon rendering support."
 authors = [{ name = "Lei", email = "caol64@gmail.com" }]
 readme = "README.md"
@@ -11,7 +11,7 @@ dependencies = [
     "numpy==1.26.4",
     "PyGLM==2.7.1",
     "wxPython==4.2.1",
-    "ps2mc",
+    "ps2mc==0.1.0",
 ]
 classifiers = [
     "Development Status :: 5 - Production/Stable",
@@ -24,6 +24,9 @@ classifiers = [
     "Programming Language :: Python",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
     "Topic :: Multimedia :: Graphics",
     "Topic :: Software Development :: User Interfaces",
     "Topic :: Utilities"

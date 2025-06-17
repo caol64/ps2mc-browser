@@ -256,7 +256,7 @@ wheels = [
 
 [[package]]
 name = "ps2mc-browser"
-version = "1.1.0"
+version = "1.0.2"
 source = { editable = "." }
 dependencies = [
     { name = "moderngl" },
@@ -278,7 +278,7 @@ requires-dist = [
     { name = "build", marker = "extra == 'dev'", specifier = "==1.2.2" },
     { name = "moderngl", specifier = "==5.8.2" },
     { name = "numpy", specifier = "==1.26.4" },
-    { name = "ps2mc" },
+    { name = "ps2mc", specifier = "==0.1.0" },
     { name = "pyglm", specifier = "==2.7.1" },
     { name = "pyinstaller", marker = "extra == 'dev'", specifier = "==6.11.1" },
     { name = "tomli", marker = "extra == 'dev'", specifier = "==2.2.1" },

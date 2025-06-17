@@ -12,14 +12,6 @@
 
 ![](data/2.gif)
 
-## 依赖
-ps2mc-browser依赖如下：
-- Python3.10
-- WxPython
-- Numpy
-- ModernGL
-- PyGlm
-
 ## 快速开始
 推荐使用`uv`创建虚拟环境运行。
 
@@ -33,6 +25,14 @@ uv run ps2mc-browser
 
 你也可以直接下载预编译的安装包:
 👉 [https://github.com/caol64/ps2mc-browser/releases](https://github.com/caol64/ps2mc-browser/releases)
+
+## 屏幕截图
+
+![](data/1.jpg)
+
+![](data/2.jpg)
+
+![](data/3.jpg)
 
 ## 文档
 - [解析PS2记忆卡文件系统](https://babyno.top/posts/2023/09/parsing-ps2-memcard-file-system/)
