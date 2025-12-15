@@ -81,6 +81,7 @@ class WxFrame(wx.Frame):
         if self.browser is not None:
             self.browser.close()
         self.browser = Browser(self.mc_path)
+        self.browser.open()
         root_dirs = self.browser.list_root_dir()
         self.games = [x.name for x in root_dirs]
         self.panel.update(self.games)

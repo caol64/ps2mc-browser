@@ -11,7 +11,7 @@ dependencies = [
     "numpy==1.26.4",
     "PyGLM==2.7.1",
     "wxPython==4.2.1",
-    "ps2mc==0.1.0",
+    "ps2mc",
 ]
 classifiers = [
     "Development Status :: 5 - Production/Stable",
@@ -66,3 +66,9 @@ onefile = true
 windowed = true
 hidden_imports = ["glcontext"]
 add_data = ["src/ps2mc_browser/shaders:ps2mc_browser/shaders"]
+
+[tool.uv.sources]
+ps2mc = { workspace = true }
+
+[tool.uv.workspace]
+members = ["packages/*"]

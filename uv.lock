@@ -2,13 +2,19 @@ version = 1
 revision = 2
 requires-python = ">=3.10"
 
+[manifest]
+members = [
+    "ps2mc",
+    "ps2mc-browser",
+]
+
 [[package]]
 name = "altgraph"
 version = "0.17.4"
 source = { registry = "https://pypi.tuna.tsinghua.edu.cn/simple" }
-sdist = { url = "https://pypi.tuna.tsinghua.edu.cn/packages/de/a8/7145824cf0b9e3c28046520480f207df47e927df83aa9555fb47f8505922/altgraph-0.17.4.tar.gz", hash = "sha256:1b5afbb98f6c4dcadb2e2ae6ab9fa994bbb8c1d75f4fa96d340f9437ae454406" }
+sdist = { url = "https://pypi.tuna.tsinghua.edu.cn/packages/de/a8/7145824cf0b9e3c28046520480f207df47e927df83aa9555fb47f8505922/altgraph-0.17.4.tar.gz", hash = "sha256:1b5afbb98f6c4dcadb2e2ae6ab9fa994bbb8c1d75f4fa96d340f9437ae454406", size = 48418, upload_time = "2023-09-25T09:04:52.164Z" }
 wheels = [
-    { url = "https://pypi.tuna.tsinghua.edu.cn/packages/4d/3f/3bc3f1d83f6e4a7fcb834d3720544ca597590425be5ba9db032b2bf322a2/altgraph-0.17.4-py2.py3-none-any.whl", hash = "sha256:642743b4750de17e655e6711601b077bc6598dbfa3ba5fa2b2a35ce12b508dff" },
+    { url = "https://pypi.tuna.tsinghua.edu.cn/packages/4d/3f/3bc3f1d83f6e4a7fcb834d3720544ca597590425be5ba9db032b2bf322a2/altgraph-0.17.4-py2.py3-none-any.whl", hash = "sha256:642743b4750de17e655e6711601b077bc6598dbfa3ba5fa2b2a35ce12b508dff", size = 21212, upload_time = "2023-09-25T09:04:50.691Z" },
 ]
 
 [[package]]
@@ -88,9 +94,9 @@ source = { registry = "https://pypi.tuna.tsinghua.edu.cn/simple" }
 dependencies = [
     { name = "altgraph" },
 ]
-sdist = { url = "https://pypi.tuna.tsinghua.edu.cn/packages/95/ee/af1a3842bdd5902ce133bd246eb7ffd4375c38642aeb5dc0ae3a0329dfa2/macholib-1.16.3.tar.gz", hash = "sha256:07ae9e15e8e4cd9a788013d81f5908b3609aa76f9b1421bae9c4d7606ec86a30" }
+sdist = { url = "https://pypi.tuna.tsinghua.edu.cn/packages/95/ee/af1a3842bdd5902ce133bd246eb7ffd4375c38642aeb5dc0ae3a0329dfa2/macholib-1.16.3.tar.gz", hash = "sha256:07ae9e15e8e4cd9a788013d81f5908b3609aa76f9b1421bae9c4d7606ec86a30", size = 59309, upload_time = "2023-09-25T09:10:16.155Z" }
 wheels = [
-    { url = "https://pypi.tuna.tsinghua.edu.cn/packages/d1/5d/c059c180c84f7962db0aeae7c3b9303ed1d73d76f2bfbc32bc231c8be314/macholib-1.16.3-py2.py3-none-any.whl", hash = "sha256:0e315d7583d38b8c77e815b1ecbdbf504a8258d8b3e17b61165c6feb60d18f2c" },
+    { url = "https://pypi.tuna.tsinghua.edu.cn/packages/d1/5d/c059c180c84f7962db0aeae7c3b9303ed1d73d76f2bfbc32bc231c8be314/macholib-1.16.3-py2.py3-none-any.whl", hash = "sha256:0e315d7583d38b8c77e815b1ecbdbf504a8258d8b3e17b61165c6feb60d18f2c", size = 38094, upload_time = "2023-09-25T09:10:14.188Z" },
 ]
 
 [[package]]
@@ -247,12 +253,8 @@ wheels = [
 
 [[package]]
 name = "ps2mc"
-version = "0.1.0"
-source = { registry = "https://pypi.tuna.tsinghua.edu.cn/simple" }
-sdist = { url = "https://pypi.tuna.tsinghua.edu.cn/packages/f7/2e/7184819fa4cee811f4a6a6b7fdd157f77fcfd925802a59f05c288f4ce508/ps2mc-0.1.0.tar.gz", hash = "sha256:98251bc90e979c2b91ae3bad930b91c5c06e0f41c3da321445132a93b1a5f5af", size = 8264, upload_time = "2025-06-06T07:17:58.661Z" }
-wheels = [
-    { url = "https://pypi.tuna.tsinghua.edu.cn/packages/30/fb/863ea0cb7599163646451f0dc372c7ef0686ab4c90028abb34c8a8c0e2a0/ps2mc-0.1.0-py3-none-any.whl", hash = "sha256:30c48041004d1301115dfc27e9cb5cdef4a86ae6399eda47d9808e955d691453", size = 10146, upload_time = "2025-06-06T07:17:57.472Z" },
-]
+version = "0.1.1"
+source = { editable = "packages/ps2mc-core" }
 
 [[package]]
 name = "ps2mc-browser"
@@ -278,7 +280,7 @@ requires-dist = [
     { name = "build", marker = "extra == 'dev'", specifier = "==1.2.2" },
     { name = "moderngl", specifier = "==5.8.2" },
     { name = "numpy", specifier = "==1.26.4" },
-    { name = "ps2mc", specifier = "==0.1.0" },
+    { name = "ps2mc", editable = "packages/ps2mc-core" },
     { name = "pyglm", specifier = "==2.7.1" },
     { name = "pyinstaller", marker = "extra == 'dev'", specifier = "==6.11.1" },
     { name = "tomli", marker = "extra == 'dev'", specifier = "==2.2.1" },
